@@ -36,11 +36,24 @@ export function SkillProof({ item, className }: { item: SkillProofItem; classNam
   );
 }
 
-export function SkillProofList({ items, className }: { items: SkillProofItem[]; className?: string }) {
+export function SkillProofList({
+  items,
+  className,
+  revealFromMs,
+}: {
+  items: SkillProofItem[];
+  className?: string;
+  /** When set, each line is read in left to right, one after another, starting at this delay. */
+  revealFromMs?: number;
+}) {
   return (
     <ul className={cn("space-y-1.5", className)}>
-      {items.map((item) => (
-        <li key={item.skill}>
+      {items.map((item, i) => (
+        <li
+          key={item.skill}
+          className={revealFromMs !== undefined ? "animate-reveal" : undefined}
+          style={revealFromMs !== undefined ? { animationDelay: `${revealFromMs + i * 110}ms` } : undefined}
+        >
           <SkillProof item={item} />
         </li>
       ))}

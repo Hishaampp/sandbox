@@ -2,12 +2,13 @@ import { BadgeCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type Tone = "neutral" | "accent" | "outline";
+type Tone = "neutral" | "accent" | "outline" | "danger";
 
 const tones: Record<Tone, string> = {
   neutral: "bg-sunken text-ink-soft",
   accent: "bg-accent-soft text-accent",
   outline: "border border-line text-muted",
+  danger: "bg-danger-soft text-danger",
 };
 
 export function Badge({

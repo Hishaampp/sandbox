@@ -138,9 +138,9 @@ export default function HomePage() {
       <SiteHeader />
       <main id="main" className="flex-1">
         {/* Hero */}
-        <Container className="grid grid-cols-1 items-center gap-14 pt-16 pb-20 md:pt-24 md:pb-28 lg:grid-cols-[1fr_minmax(0,30rem)] lg:gap-16">
+        <Container className="grid grid-cols-1 items-center gap-14 pt-16 pb-20 md:pt-24 md:pb-28 lg:grid-cols-2 lg:gap-16 xl:gap-24">
           <div className="max-w-prose">
-            <h1 className="text-display-sm font-semibold text-balance text-ink md:text-display">
+            <h1 className="text-display-sm font-semibold text-balance text-ink md:text-display xl:text-display-lg">
               Find teammates by what they&rsquo;ve built, not what they claim.
             </h1>
             <p className="mt-6 text-lead text-pretty text-muted">
@@ -166,7 +166,7 @@ export default function HomePage() {
         </Container>
 
         {/* Problem */}
-        <Section id="problem" title="Good student ideas stall without a team.">
+        <Section id="problem" layout="split" title="Good student ideas stall without a team.">
           <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line">
             {problems.map((p) => (
               <div key={p.title} className="md:px-8 md:first:pl-0 md:last:pr-0">
@@ -245,6 +245,7 @@ export default function HomePage() {
         {/* Privacy */}
         <Section
           id="privacy"
+          layout="split"
           title="Built to protect students"
           intro="Trust is the product. Every rule below is enforced by the database, not just the page."
         >
@@ -260,6 +261,7 @@ export default function HomePage() {
         {/* For universities */}
         <Section
           id="universities"
+          layout="split"
           title="What the university gains"
           intro="Sandbox is always free for students: verification, posting ideas and matching. No data selling, no ads."
         >

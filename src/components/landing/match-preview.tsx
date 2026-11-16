@@ -1,4 +1,5 @@
 import { Clock, Users } from "lucide-react";
+import type React from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge, VerifiedBadge } from "@/components/ui/badge";
 import { Panel } from "@/components/ui/panel";
@@ -71,35 +72,47 @@ export function MatchPreview() {
         </div>
 
         <ol className="divide-y divide-line">
-          {matches.map((m, i) => (
-            <li key={m.name} className="p-5">
-              <div className="flex items-start gap-3">
-                <Avatar name={m.name} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <p className="font-medium text-ink">{m.name}</p>
-                    <VerifiedBadge />
+          {matches.map((m, i) => {
+            // One authored sequence: each builder arrives, their match counts up,
+            // then their proof is read in line by line.
+            const arriveAt = 250 + i * 420;
+            return (
+              <li key={m.name} className="animate-arrive p-5" style={{ animationDelay: `${arriveAt}ms` }}>
+                <div className="flex items-start gap-3">
+                  <Avatar name={m.name} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <p className="font-medium text-ink">{m.name}</p>
+                      <VerifiedBadge />
+                    </div>
+                    <p className="text-caption text-muted">{m.meta}</p>
                   </div>
-                  <p className="text-caption text-muted">{m.meta}</p>
+                  <div className="text-right">
+                    <p className="font-mono text-title font-semibold text-accent tabular-nums">
+                      <span className="sr-only">{m.pct}%</span>
+                      <span
+                        aria-hidden="true"
+                        className="tally animate-tally"
+                        style={{ "--tally": m.pct, animationDelay: `${arriveAt + 120}ms` } as React.CSSProperties}
+                      />
+                    </p>
+                    <p className="text-caption text-muted">{m.matched}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-mono text-title font-semibold text-accent tabular-nums">{m.pct}%</p>
-                  <p className="text-caption text-muted">{m.matched}</p>
-                </div>
-              </div>
-              <SkillProofList items={m.proof} className="mt-4 sm:pl-13" />
-              {i === 0 && (
-                <div className="mt-4 flex gap-2 sm:pl-13">
-                  <span className="inline-flex h-8 items-center rounded-control bg-ink px-3 text-caption font-medium text-canvas">
-                    Invite to team
-                  </span>
-                  <span className="inline-flex h-8 items-center rounded-control border border-line-strong px-3 text-caption font-medium text-ink">
-                    View profile
-                  </span>
-                </div>
-              )}
-            </li>
-          ))}
+                <SkillProofList items={m.proof} className="mt-4 sm:pl-13" revealFromMs={arriveAt + 260} />
+                {i === 0 && (
+                  <div className="mt-4 flex gap-2 sm:pl-13">
+                    <span className="inline-flex h-8 items-center rounded-control bg-ink px-3 text-caption font-medium text-canvas">
+                      Invite to team
+                    </span>
+                    <span className="inline-flex h-8 items-center rounded-control border border-line-strong px-3 text-caption font-medium text-ink">
+                      View profile
+                    </span>
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ol>
       </Panel>
       <figcaption className="mt-3 text-caption text-muted">

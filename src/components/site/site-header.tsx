@@ -38,13 +38,13 @@ export function SiteHeader() {
 }
 
 /** Slim header for focused pages (sign-in, onboarding): logo and a way back. */
-export function SlimHeader() {
+export function SlimHeader({ backHref = "/", backLabel = "Back to home" }: { backHref?: string; backLabel?: string }) {
   return (
     <header className="border-b border-line">
       <Container className="flex h-16 items-center justify-between">
         <Logo />
-        <Link href="/" className="text-body-sm text-muted transition-colors hover:text-ink">
-          Back to home
+        <Link href={backHref} className="text-body-sm text-muted transition-colors hover:text-ink">
+          {backLabel}
         </Link>
       </Container>
     </header>
