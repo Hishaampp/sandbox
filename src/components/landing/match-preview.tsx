@@ -129,7 +129,7 @@ export function MatchPreview() {
         </ol>
       </Panel>
       <figcaption className="mt-3 text-caption text-muted">
-        An example of what an idea owner will see once matching opens. Names, repos and activity are illustrative.
+        An example of what an idea owner sees. Names, repos and activity are illustrative.
       </figcaption>
     </figure>
   );

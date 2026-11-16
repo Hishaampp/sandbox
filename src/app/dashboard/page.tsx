@@ -11,6 +11,7 @@ import { Panel } from "@/components/ui/panel";
 import { firstName, requireViewer, type Viewer } from "@/lib/auth";
 import { formatDate, formatDateTime, yearLabel } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
+import { MyIdeas } from "./my-ideas";
 import { SkillsPanel } from "./skills-panel";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -236,11 +237,17 @@ async function DashboardContent({ searchParams }: { searchParams: PageProps<"/da
                       icon={<Lightbulb className="size-4" />}
                       title="Post an idea or join one"
                       body="Find teammates by what they've built, or join a project that fits your skills."
-                      state={<Badge tone="outline">Coming next</Badge>}
+                      state={
+                        <ButtonLink href="/ideas" variant="secondary" size="sm">
+                          Browse
+                        </ButtonLink>
+                      }
                     />
                   </ol>
                 </Panel>
               </section>
+
+              <MyIdeas viewer={viewer} />
 
               <SkillsPanel viewer={viewer} />
             </div>

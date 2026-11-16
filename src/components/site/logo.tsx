@@ -11,7 +11,8 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ className }: { className?: string }) {
+/** compact hides the wordmark on small screens (app header, where the nav needs the room). */
+export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
     <Link
       href="/"
@@ -19,7 +20,7 @@ export function Logo({ className }: { className?: string }) {
       aria-label="Sandbox home"
     >
       <LogoMark />
-      <span className="font-display text-lead font-bold tracking-tight">Sandbox</span>
+      <span className={cn("font-display text-lead font-bold tracking-tight", compact && "hidden sm:inline")}>Sandbox</span>
     </Link>
   );
 }

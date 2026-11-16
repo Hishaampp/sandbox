@@ -749,6 +749,14 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      skill_catalog: {
+        Args: never
+        Returns: {
+          name: string
+          slug: string
+          students: number
+        }[]
+      }
       skill_score: {
         Args: { p_last_push: string; p_repo_count: number; p_stars: number }
         Returns: number

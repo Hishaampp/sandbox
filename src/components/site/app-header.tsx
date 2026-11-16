@@ -4,10 +4,11 @@ import { Badge, VerifiedBadge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import type { Viewer } from "@/lib/auth";
 import { cn } from "@/lib/cn";
+import { getPendingReceivedCount } from "@/lib/ideas";
 import { Logo } from "./logo";
 import { UserMenu } from "./user-menu";
 
-type Section = "dashboard" | "admin";
+type Section = "dashboard" | "ideas" | "requests" | "admin";
 
 function StatusBadge({ status }: { status: Viewer["status"] }) {
   switch (status) {
@@ -31,29 +32,38 @@ function StatusBadge({ status }: { status: Viewer["status"] }) {
 }
 
 /** Header for signed-in pages: where you are, your status, your account. */
-export function AppHeader({ viewer, current }: { viewer: Viewer; current?: Section }) {
-  const links: { href: string; label: string; section: Section }[] = [
+export async function AppHeader({ viewer, current }: { viewer: Viewer; current?: Section }) {
+  const waiting = await getPendingReceivedCount(viewer.id);
+  const links: { href: string; label: string; section: Section; count?: number }[] = [
     { href: "/dashboard", label: "Dashboard", section: "dashboard" },
+    { href: "/ideas", label: "Ideas", section: "ideas" },
+    { href: "/requests", label: "Requests", section: "requests", count: waiting },
     ...(viewer.isAdmin ? [{ href: "/admin", label: "Admin", section: "admin" as const }] : []),
   ];
 
   return (
     <header className="border-b border-line bg-canvas">
-      <Container className="flex h-16 items-center gap-6">
-        <Logo />
+      <Container className="flex h-16 items-center gap-3 sm:gap-6">
+        <Logo compact />
         <nav aria-label="Main" className="min-w-0 flex-1">
-          <ul className="flex items-center gap-1">
+          <ul className="scroll-row -my-2 flex items-center gap-1 py-2">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   aria-current={link.section === current ? "page" : undefined}
                   className={cn(
-                    "rounded-control px-3 py-2 text-body-sm transition-colors hover:text-ink",
+                    "inline-flex items-center rounded-control px-2.5 py-2 text-body-sm whitespace-nowrap transition-colors hover:text-ink sm:px-3",
                     link.section === current ? "font-medium text-ink" : "text-muted",
                   )}
                 >
                   {link.label}
+                  {link.count ? (
+                    <span className="ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-action px-1.5 text-caption font-medium text-action-ink tabular-nums">
+                      {link.count}
+                      <span className="sr-only"> waiting</span>
+                    </span>
+                  ) : null}
                 </Link>
               </li>
             ))}

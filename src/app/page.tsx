@@ -37,9 +37,9 @@ const problems = [
 const steps = [
   { title: "Sign in with Google", body: "Browse straight away. No forms first.", live: true },
   { title: "Verify once", body: "Your college details and an ID photo, checked by a coordinator.", live: true },
-  { title: "Post or ask to join", body: "Owners post an idea and the skills it needs. Builders apply.", live: false },
-  { title: "Get matched", body: "Owners see builders ranked by proven skills, with the reason for each.", live: false },
-  { title: "Form the team", body: "Accepted teammates see the full project plan and start building.", live: false },
+  { title: "Post or ask to join", body: "Owners post an idea and the skills it needs. Builders apply.", live: true },
+  { title: "Get matched", body: "Owners see builders ranked by proven skills, with the reason for each.", live: true },
+  { title: "Form the team", body: "Accepted teammates see the full project plan and start building.", live: true },
 ];
 
 /** Illustrative repositories, and what Sandbox does with each. */
@@ -152,7 +152,7 @@ export default function HomePage() {
         <Section
           id="how-it-works"
           title="From idea to team in five steps"
-          intro="Sign-in and verification work today. Posting, matching and teams open next, starting at LPU."
+          intro="All five steps work today, starting at LPU. Browsing is open; you verify only when you first post or join."
         >
           <ol className="grid grid-cols-1 gap-8 md:grid-cols-5 md:gap-6">
             {steps.map((s, i) => (

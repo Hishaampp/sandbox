@@ -255,6 +255,22 @@
 /* Shows the --tally integer as text, e.g. "92%". Pair with animate-tally
    and keep the real value in a screen-reader-only span. */
 @layer components {
+  /* A row that scrolls sideways on small screens without showing a scrollbar. */
+  .scroll-row {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+  /* On small screens, fade the last stretch so a clipped item reads as "scroll for more". */
+  @media (width < 40rem) {
+    .scroll-row {
+      mask-image: linear-gradient(to right, var(--navy) calc(100% - 1.5rem), transparent);
+      padding-right: 1.5rem;
+    }
+  }
+
   /*
    * The night field: navy deepening downward, one coral light source low on
    * the right, and a faint commit-graph grid that fades out toward the edges.

@@ -121,42 +121,42 @@ insert into public.ideas (owner_id, college_id, title, summary, skills_needed, t
 values (auth.uid(), (select id from public.colleges where slug = 'lpu'), 'Lab slot alerts',
         'Alerts when a lab slot frees up so students can book it fast.', '{React, "UI Design"}', 1, 6);
 select pg_temp.check('owner is on the team and details row exists',
-  (select count(*) = 1 from public.team_members t join public.ideas i on i.id = t.idea_id where t.role = 'owner')
-  and (select count(*) = 1 from public.idea_details));
+  (select count(*) = 1 from public.team_members t join public.ideas i on i.id = t.idea_id where t.role = 'owner' and i.owner_id = '00000000-0000-0000-0000-00000000000a')
+  and (select count(*) = 1 from public.idea_details where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
 select pg_temp.check('skill tags normalised to slugs',
-  (select skills_needed = '{react,ui-design}' or skills_needed = '{ui-design,react}' from public.ideas));
-update public.idea_details set details = 'Full plan: scrape the lab booking page every minute.';
+  (select skills_needed = '{react,ui-design}' or skills_needed = '{ui-design,react}' from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'));
+update public.idea_details set details = 'Full plan: scrape the lab booking page every minute.' where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a');
 
 select pg_temp.check('owner sees builder B ranked with proof',
   (select match_pct > 0 and matched_count = 2 and needed_count = 2
-   from public.idea_matches((select id from public.ideas limit 1))
+   from public.idea_matches((select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'))
    where profile_id = '00000000-0000-0000-0000-00000000000b'));
 
 -- Builder cannot see matches or full details yet.
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
-select pg_temp.expect_error('builder cannot read matches', $$select * from public.idea_matches((select id from public.ideas limit 1))$$);
+select pg_temp.expect_error('builder cannot read matches', $$select * from public.idea_matches((select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'))$$);
 select pg_temp.check('builder cannot read full details before joining', (select count(*) = 0 from public.idea_details));
-select pg_temp.check('idea is suggested to builder B', (select count(*) = 1 from public.ideas_for_me()));
+select pg_temp.check('idea is suggested to builder B', exists (select 1 from public.ideas_for_me() f where f.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
 
 -- Unverified C cannot apply.
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000c');
 select pg_temp.expect_error('unverified student cannot apply',
-  $$insert into public.requests (idea_id, profile_id, type) values ((select id from public.ideas limit 1), auth.uid(), 'application')$$);
+  $$insert into public.requests (idea_id, profile_id, type) values ((select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'), auth.uid(), 'application')$$);
 
 -- Owner invites B; only B can accept.
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
 insert into public.requests (idea_id, profile_id, type, message)
-values ((select id from public.ideas limit 1), '00000000-0000-0000-0000-00000000000b', 'invite', 'Want to build this with me?');
+values ((select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'), '00000000-0000-0000-0000-00000000000b', 'invite', 'Want to build this with me?');
 select pg_temp.expect_error('owner cannot accept their own invite',
-  $$select public.respond_to_request((select id from public.requests limit 1), true)$$);
+  $$select public.respond_to_request((select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1), true)$$);
 
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
-select public.respond_to_request((select id from public.requests limit 1), true);
-select pg_temp.check('team formed when full', (select status = 'team_formed' from public.ideas limit 1));
-select pg_temp.check('accepted builder can now read full details', (select count(*) = 1 from public.idea_details));
+select public.respond_to_request((select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1), true);
+select pg_temp.check('team formed when full', (select status = 'team_formed' from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'));
+select pg_temp.check('accepted builder can now read full details', (select count(*) = 1 from public.idea_details where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
 update public.idea_details set details = 'hacked';  -- RLS: matches 0 rows for a non-owner
 select pg_temp.check('builder update did not change details',
-  (select details like 'Full plan%' from public.idea_details));
+  (select details like 'Full plan%' from public.idea_details where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
 
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000c');
 select pg_temp.check('outsider still cannot read full details', (select count(*) = 0 from public.idea_details));
