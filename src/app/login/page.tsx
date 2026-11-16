@@ -58,13 +58,13 @@ function SignInActionsFallback() {
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
-    <>
+    <div className="theme-night night-field flex flex-1 flex-col">
       <SlimHeader />
       <main id="main" className="flex flex-1 items-center justify-center px-5 py-16">
         <div className="w-full max-w-sm">
-          <Panel className="p-8">
+          <Panel className="p-8 backdrop-blur-xl">
             <LogoMark className="size-8 text-ink" />
-            <h1 className="mt-6 text-title font-semibold text-ink">Sign in to Sandbox</h1>
+            <h1 className="mt-6 font-display text-title font-semibold text-ink">Sign in to Sandbox</h1>
             <p className="mt-2 text-body-sm text-muted">
               Use your Google account. You can browse ideas and profiles straight away.
             </p>
@@ -87,6 +87,6 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
           </p>
         </div>
       </main>
-    </>
+    </div>
   );
 }

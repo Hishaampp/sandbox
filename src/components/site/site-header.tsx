@@ -12,7 +12,7 @@ const links = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-canvas/85 backdrop-blur">
+    <header className="theme-night sticky top-0 z-30 border-b border-line bg-navy">
       <Container className="flex h-16 items-center justify-between gap-6">
         <Logo />
         <nav aria-label="Main" className="hidden md:block">
@@ -21,7 +21,7 @@ export function SiteHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="rounded-control px-3 py-2 text-body-sm text-muted transition-colors hover:text-ink"
+                  className="rounded-control px-3 py-2 text-body-sm text-muted transition-colors duration-150 hover:text-ink"
                 >
                   {link.label}
                 </Link>

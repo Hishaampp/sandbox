@@ -4,6 +4,7 @@ import { cn } from "@/lib/cn";
 import { Spinner } from "./spinner";
 
 type Variant = "primary" | "secondary" | "ghost";
+
 type Size = "sm" | "md" | "lg";
 
 const base =
@@ -12,7 +13,7 @@ const base =
   "aria-disabled:pointer-events-none aria-disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-ink text-canvas hover:bg-ink/85",
+  primary: "bg-action text-action-ink hover:bg-action-hover",
   secondary: "border border-line-strong bg-paper text-ink hover:bg-sunken",
   ghost: "text-ink hover:bg-sunken",
 };

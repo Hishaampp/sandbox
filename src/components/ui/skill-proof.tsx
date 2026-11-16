@@ -15,10 +15,11 @@ export type SkillProofItem = {
  */
 export function SkillProof({ item, className }: { item: SkillProofItem; className?: string }) {
   return (
-    <div className={cn("flex min-w-0 items-baseline gap-3 text-caption", className)}>
+    // On phones the evidence stacks under the skill and wraps, so proof is never cut off.
+    <div className={cn("flex min-w-0 flex-col text-caption sm:flex-row sm:items-baseline sm:gap-3", className)}>
       <span
         className={cn(
-          "w-24 shrink-0 truncate font-medium",
+          "shrink-0 font-medium sm:w-24 sm:truncate",
           item.source === "self" ? "text-muted" : "text-ink",
         )}
       >
@@ -26,7 +27,7 @@ export function SkillProof({ item, className }: { item: SkillProofItem; classNam
       </span>
       <span
         className={cn(
-          "min-w-0 truncate",
+          "min-w-0 break-words sm:truncate",
           item.source === "github" ? "font-mono text-ink-soft" : "text-muted italic",
         )}
       >

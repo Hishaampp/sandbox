@@ -2,43 +2,78 @@
 
 /*
  * Sandbox design tokens — the single place for shared values.
- * Calm & precise: stone neutrals, one "proof" green accent, 1px borders.
- * Components use the Tailwind utilities these generate (bg-canvas,
- * text-ink, border-line, text-accent …), never raw hex values.
+ * Founder palette: Navy #14213D, Cream #F4EDE0, Coral #FF6B5B.
+ * Day (default): cream ground, navy ink, coral for actions. Calm, for the app.
+ * Night: navy ground, cream ink, coral light. The public site's hero, header,
+ * footer and sign-in wear it via .theme-night, and dark mode uses it everywhere.
+ * Components use the Tailwind utilities these generate (bg-canvas, text-ink,
+ * bg-action, border-line …), never raw hex values.
+ * Contrast: coral is a fill and a glow, never text on cream (2.4:1); text
+ * accents on cream use deep coral #B8392A (4.9:1).
  */
 
 :root {
-  --canvas: #fafaf9; /* page background */
-  --paper: #ffffff; /* raised surfaces: panels, inputs */
-  --sunken: #f5f5f4; /* quiet fills: code chips, hover rows */
-  --ink: #1c1917; /* primary text, primary buttons */
-  --ink-soft: #44403c; /* body copy on long-form sections */
-  --muted: #78716c; /* secondary text, captions */
-  --line: #e7e5e4; /* borders and rules */
-  --line-strong: #d6d3d1; /* input borders, emphasised rules */
-  --accent: #0f7b5f; /* verified, links, match %, focus */
-  --accent-ink: #ffffff; /* text on accent */
-  --accent-soft: #e8f4ef; /* accent tint backgrounds */
-  --danger: #b42318;
-  --danger-soft: #fdf0ee;
+  /* Brand constants: the same in every scope. */
+  --navy: #14213d;
+  --navy-deep: #0e1830;
+  --cream: #f4ede0;
+  --coral: #ff6b5b;
+
+  --canvas: #f4ede0; /* page ground: cream */
+  --paper: #fbf8f2; /* raised surfaces: panels, inputs */
+  --sunken: #ebe3d4; /* quiet fills, skeletons, hover rows */
+  --ink: #14213d; /* primary text: navy */
+  --ink-soft: #2e3a55; /* long-form copy */
+  --muted: #5b6478; /* secondary text, captions */
+  --line: #ded4c2; /* borders and rules */
+  --line-strong: #c9bda8; /* input borders, emphasised rules */
+  --action: #ff6b5b; /* primary action fill: coral */
+  --action-hover: #ff8577;
+  --action-ink: #14213d; /* text on coral (5.7:1) */
+  --accent: #b8392a; /* text accent on cream: links, match % */
+  --accent-soft: #fbe2dc; /* coral tint backgrounds */
+  --danger: #a3261b;
+  --danger-soft: #f8ddd8;
 }
 
+/* Night values, shared by dark mode and the .theme-night scope. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --canvas: #0c0a09;
-    --paper: #161412;
-    --sunken: #1f1c1a;
-    --ink: #f5f5f4;
-    --ink-soft: #d6d3d1;
-    --muted: #a8a29e;
-    --line: #292524;
-    --line-strong: #44403c;
-    --accent: #3fb58e;
-    --accent-ink: #06261c;
-    --accent-soft: #10271f;
-    --danger: #f97066;
-    --danger-soft: #2a1412;
+    --canvas: #0e1830;
+    --paper: #14213d;
+    --sunken: #1a2a4c;
+    --ink: #f4ede0;
+    --ink-soft: #dcd3c3;
+    --muted: #a9b0bf;
+    --line: #24345a;
+    --line-strong: #34477a;
+    --action: #ff6b5b;
+    --action-hover: #ff8577;
+    --action-ink: #14213d;
+    --accent: #ff8a7c;
+    --accent-soft: #3a2236;
+    --danger: #ff9b8f;
+    --danger-soft: #3a1c22;
   }
+}
+
+.theme-night {
+  --canvas: #0e1830;
+  --paper: rgb(244 237 224 / 0.06); /* frosted glass over the night field */
+  --sunken: rgb(244 237 224 / 0.08);
+  --ink: #f4ede0;
+  --ink-soft: #dcd3c3;
+  --muted: #a9b0bf;
+  --line: rgb(244 237 224 / 0.14);
+  --line-strong: rgb(244 237 224 / 0.24);
+  --action: #ff6b5b;
+  --action-hover: #ff8577;
+  --action-ink: #14213d;
+  --accent: #ff8a7c;
+  --accent-soft: rgb(255 107 91 / 0.16);
+  --danger: #ff9b8f;
+  --danger-soft: rgb(255 107 91 / 0.12);
+  color: var(--ink);
 }
 
 @theme inline {
@@ -51,12 +86,19 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+  --color-action-ink: var(--action-ink);
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-cream: var(--cream);
+  --color-coral: var(--coral);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* Type scale (size / line-height / tracking) */
@@ -98,6 +140,7 @@
   --animate-reveal: reveal 700ms var(--ease-out) both;
   --animate-pop: pop 160ms var(--ease-out) both;
   --animate-tally: tally 900ms var(--ease-out) both;
+  --animate-lit: lit 1400ms var(--ease-out) both;
 
   @keyframes arrive {
     from {
@@ -124,6 +167,21 @@
   @keyframes tally {
     from {
       --tally: 0;
+    }
+  }
+  /* A commit-graph cell catching light, then settling. */
+  @keyframes lit {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: var(--lit-rest, 0.55);
+      transform: scale(1);
     }
   }
   @keyframes fade {
@@ -184,6 +242,10 @@
     .animate-tally {
       animation: none;
     }
+    .animate-lit {
+      animation: none;
+      opacity: var(--lit-rest, 0.55);
+    }
     * {
       scroll-behavior: auto !important;
     }
@@ -193,6 +255,51 @@
 /* Shows the --tally integer as text, e.g. "92%". Pair with animate-tally
    and keep the real value in a screen-reader-only span. */
 @layer components {
+  /*
+   * The night field: navy deepening downward, one coral light source low on
+   * the right, and a faint commit-graph grid that fades out toward the edges.
+   */
+  .night-field {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(var(--glow-size, 55% 65%) at var(--glow-at, 80% 92%), rgb(255 107 91 / 0.5), transparent 62%),
+      radial-gradient(35% 45% at var(--glow-halo-at, 64% 70%), rgb(255 107 91 / 0.14), transparent 70%),
+      linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  }
+  /* One light source, placed differently per section so it never reads as a stamp. */
+  .night-field-left {
+    --glow-at: 8% 100%;
+    --glow-halo-at: 22% 80%;
+    --glow-size: 50% 70%;
+  }
+  .night-field-low {
+    --glow-at: 50% 140%;
+    --glow-halo-at: 50% 110%;
+    --glow-size: 80% 90%;
+  }
+  .night-field::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Crect x='5' y='5' width='18' height='18' rx='4' fill='%23F4EDE0' fill-opacity='0.055'/%3E%3C/svg%3E");
+    mask-image: radial-gradient(75% 80% at 70% 60%, #000 30%, transparent 85%);
+    pointer-events: none;
+  }
+  /* A commit-graph cell: dark when idle, coral when it carries activity. */
+  .commit-cell {
+    border-radius: 3px;
+    background: rgb(244 237 224 / 0.07);
+  }
+  .commit-cell[data-lit] {
+    background: var(--coral);
+    opacity: var(--lit-rest, 0.55);
+  }
+  .commit-cell[data-lit][data-glow] {
+    box-shadow: 0 0 14px 1px rgb(255 107 91 / 0.4);
+  }
+
   .tally {
     counter-reset: tally var(--tally);
   }

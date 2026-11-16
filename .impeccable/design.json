@@ -1,0 +1,557 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T17:32:01.546Z",
+  "title": "Design System: Sandbox",
+  "extensions": {
+    "colorMeta": {
+      "navy": {
+        "role": "neutral",
+        "displayName": "Campus Navy",
+        "canonical": "oklch(25.2% 0.056 264)",
+        "tonalRamp": [
+          "#090b10",
+          "#1e2431",
+          "#354055",
+          "#4e5e7c",
+          "#6f80a2",
+          "#98a5bf",
+          "#c2cbdc",
+          "#eaeff7"
+        ]
+      },
+      "navy-deep": {
+        "role": "neutral",
+        "displayName": "Midnight Navy",
+        "canonical": "oklch(21.4% 0.050 265)",
+        "tonalRamp": [
+          "#090b10",
+          "#1f242f",
+          "#374053",
+          "#515d79",
+          "#72809e",
+          "#9aa5bc",
+          "#c3cbda",
+          "#ebeef6"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Notebook Cream",
+        "canonical": "oklch(94.8% 0.019 83)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#26241f",
+          "#433f38",
+          "#635d52",
+          "#867f74",
+          "#a9a49b",
+          "#cdcac4",
+          "#f0eeeb"
+        ]
+      },
+      "coral": {
+        "role": "primary",
+        "displayName": "Build-Night Coral",
+        "canonical": "oklch(70.9% 0.184 28)",
+        "tonalRamp": [
+          "#190403",
+          "#450d09",
+          "#751711",
+          "#aa211a",
+          "#d7483b",
+          "#ec8274",
+          "#fdb6ab",
+          "#ffe5df"
+        ]
+      },
+      "coral-hover": {
+        "role": "primary",
+        "displayName": "Coral Hover",
+        "canonical": "oklch(75.0% 0.151 27)",
+        "tonalRamp": [
+          "#170604",
+          "#401410",
+          "#6d231d",
+          "#9e342c",
+          "#ca574b",
+          "#e1897e",
+          "#f5bab1",
+          "#ffe7e2"
+        ]
+      },
+      "deep-coral": {
+        "role": "primary",
+        "displayName": "Deep Coral",
+        "canonical": "oklch(53.0% 0.166 30)",
+        "tonalRamp": [
+          "#180503",
+          "#42110b",
+          "#711f15",
+          "#a42d20",
+          "#d05140",
+          "#e68677",
+          "#f9b8ad",
+          "#ffe6e0"
+        ]
+      },
+      "coral-tint": {
+        "role": "primary",
+        "displayName": "Coral Tint",
+        "canonical": "oklch(93.1% 0.029 33)",
+        "tonalRamp": [
+          "#0e0a09",
+          "#2a2220",
+          "#4a3c39",
+          "#6c5854",
+          "#907a75",
+          "#b1a09c",
+          "#d3c8c5",
+          "#f3edec"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "oklch(98.0% 0.009 84)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#252422",
+          "#413f3c",
+          "#605d59",
+          "#82807b",
+          "#a6a4a0",
+          "#cccac8",
+          "#efeeed"
+        ]
+      },
+      "sunken": {
+        "role": "neutral",
+        "displayName": "Sunken Cream",
+        "canonical": "oklch(91.8% 0.022 83)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#26241f",
+          "#443f37",
+          "#635d51",
+          "#867f72",
+          "#a9a49a",
+          "#cecac3",
+          "#f0eeeb"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft Ink",
+        "canonical": "oklch(35.0% 0.050 265)",
+        "tonalRamp": [
+          "#090b10",
+          "#1f242f",
+          "#374053",
+          "#515d79",
+          "#72809f",
+          "#9aa5bc",
+          "#c3cbda",
+          "#ebeef6"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate Muted",
+        "canonical": "oklch(50.3% 0.034 266)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#20242c",
+          "#3a404d",
+          "#555e70",
+          "#778095",
+          "#9da5b5",
+          "#c6cbd5",
+          "#eceef4"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Rule Sand",
+        "canonical": "oklch(87.3% 0.027 82)",
+        "tonalRamp": [
+          "#0c0b08",
+          "#27241d",
+          "#453f35",
+          "#655d4e",
+          "#887f6f",
+          "#aba497",
+          "#cecac2",
+          "#f0eeea"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "canonical": "oklch(80.3% 0.032 81)",
+        "tonalRamp": [
+          "#0d0b08",
+          "#28231c",
+          "#463f32",
+          "#665c4b",
+          "#8a7f6b",
+          "#aca395",
+          "#cfcac0",
+          "#f1eee9"
+        ]
+      },
+      "danger": {
+        "role": "error",
+        "displayName": "Danger",
+        "canonical": "oklch(47.2% 0.163 29)",
+        "tonalRamp": [
+          "#180504",
+          "#41120c",
+          "#702017",
+          "#a32e23",
+          "#cf5243",
+          "#e58778",
+          "#f8b9ae",
+          "#ffe6e1"
+        ]
+      },
+      "danger-soft": {
+        "role": "error",
+        "displayName": "Danger Soft",
+        "canonical": "oklch(91.8% 0.031 30)",
+        "tonalRamp": [
+          "#0e0a09",
+          "#2b2220",
+          "#4b3c39",
+          "#6d5854",
+          "#927a75",
+          "#b2a09c",
+          "#d4c7c5",
+          "#f3edec"
+        ]
+      },
+      "night-ink-soft": {
+        "role": "neutral",
+        "displayName": "Night Soft Ink",
+        "canonical": "oklch(87.0% 0.024 82)",
+        "tonalRamp": [
+          "#0c0b09",
+          "#27241e",
+          "#443f36",
+          "#645d4f",
+          "#877f71",
+          "#aaa499",
+          "#cecac3",
+          "#f0eeeb"
+        ]
+      },
+      "night-muted": {
+        "role": "neutral",
+        "displayName": "Night Muted",
+        "canonical": "oklch(75.6% 0.023 265)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#222429",
+          "#3c4049",
+          "#585e6a",
+          "#7a808e",
+          "#a0a5af",
+          "#c7cad2",
+          "#edeef2"
+        ]
+      },
+      "night-accent": {
+        "role": "primary",
+        "displayName": "Night Coral",
+        "canonical": "oklch(75.9% 0.144 28)",
+        "tonalRamp": [
+          "#160605",
+          "#3f1511",
+          "#6b251f",
+          "#9c372e",
+          "#c7594e",
+          "#df8b80",
+          "#f3bbb2",
+          "#ffe7e3"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display-lg": {
+        "displayName": "Display Large",
+        "purpose": "Hero headline at xl, night field only."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero and closing headlines from md."
+      },
+      "display-sm": {
+        "displayName": "Display Small",
+        "purpose": "Hero and closing headlines on phones."
+      },
+      "heading": {
+        "displayName": "Heading",
+        "purpose": "Landing section titles; the one page title in the app."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel and card titles."
+      },
+      "lead": {
+        "displayName": "Lead",
+        "purpose": "One intro line under a display or heading, muted, max 40rem."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default copy."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Nav links, inputs, table cells, panel copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, field labels, row names."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Meta, panel labels in sentence case, badges, figcaptions."
+      },
+      "proof": {
+        "displayName": "Proof",
+        "purpose": "Evidence read from code, repo names, match scores. Never decorative."
+      }
+    },
+    "shadows": [
+      {
+        "name": "lit-cell-glow",
+        "value": "0 0 14px 1px rgb(255 107 91 / 0.4)",
+        "purpose": "Brightest commit cells only; light, not elevation."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The only easing: confident deceleration."
+      },
+      {
+        "name": "arrive",
+        "value": "600ms ease-out; from opacity 0, translateY(10px), blur(4px)",
+        "purpose": "A builder row entering the match preview."
+      },
+      {
+        "name": "reveal",
+        "value": "700ms ease-out; clip-path inset from right",
+        "purpose": "Proof lines read left to right, 110ms stagger."
+      },
+      {
+        "name": "pop",
+        "value": "160ms ease-out; from opacity 0, translateY(-4px) scale(0.97)",
+        "purpose": "Menus opening."
+      },
+      {
+        "name": "tally",
+        "value": "900ms ease-out; @property --tally integer 0 to value",
+        "purpose": "Match percentage counting up; real value in sr-only text."
+      },
+      {
+        "name": "lit",
+        "value": "1400ms ease-out; scale 0.6 to 1, settle at --lit-rest",
+        "purpose": "Commit cells catching light, 45 to 80ms stagger."
+      },
+      {
+        "name": "transition-state",
+        "value": "150ms ease-out",
+        "purpose": "Hover colour changes on buttons and links."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "arrive/pop become 200ms fades; reveal, tally, lit removed (cells rest at final opacity)",
+        "purpose": "Keeps state change visible without travel."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ],
+    "scopes": [
+      {
+        "name": "day",
+        "selector": ":root",
+        "purpose": "Cream canvas, navy ink; the signed-in app."
+      },
+      {
+        "name": "night",
+        "selector": ".theme-night, @media (prefers-color-scheme: dark)",
+        "purpose": "Navy canvas, cream ink; .theme-night uses glass paper (cream 6%) and cream-alpha lines, dark mode uses solid navy paper (#14213d), sunken #1a2a4c, lines #24345a / #34477a."
+      }
+    ],
+    "contrast": [
+      {
+        "pair": "navy on cream",
+        "ratio": "13.7:1"
+      },
+      {
+        "pair": "navy on coral",
+        "ratio": "5.7:1"
+      },
+      {
+        "pair": "coral on cream",
+        "ratio": "2.4:1",
+        "verdict": "never text"
+      },
+      {
+        "pair": "deep coral #B8392A on cream",
+        "ratio": "4.9:1",
+        "verdict": "text accents"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one coral action per view; navy label on coral (5.7:1).",
+      "html": "<button class=\"ds-btn-primary\">Continue with Google</button>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:6px;font-weight:500;font-size:0.9375rem;line-height:1.5rem;font-family:Geist,ui-sans-serif,system-ui,sans-serif;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),transform 150ms;cursor:pointer;background:var(--action);color:var(--action-ink);border:none} .ds-btn-primary:hover{background:var(--action-hover)} .ds-btn-primary:focus-visible{outline:2px solid var(--accent,#b8392a);outline-offset:2px;} .ds-btn-primary:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Paper fill with a strong-rule border; glass on the night field.",
+      "html": "<button class=\"ds-btn-secondary\">View profile</button>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:6px;font-weight:500;font-size:0.9375rem;line-height:1.5rem;font-family:Geist,ui-sans-serif,system-ui,sans-serif;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),transform 150ms;cursor:pointer;background:var(--paper);color:var(--ink);border:1px solid var(--line-strong)} .ds-btn-secondary:hover{background:var(--sunken)} .ds-btn-secondary:focus-visible{outline:2px solid var(--accent,#b8392a);outline-offset:2px;} .ds-btn-secondary:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Text-only action; sunken on hover.",
+      "html": "<button class=\"ds-btn-ghost\">How it works</button>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:6px;font-weight:500;font-size:0.9375rem;line-height:1.5rem;font-family:Geist,ui-sans-serif,system-ui,sans-serif;transition:background-color 150ms cubic-bezier(0.16,1,0.3,1),transform 150ms;cursor:pointer;background:transparent;color:var(--ink);border:none} .ds-btn-ghost:hover{background:var(--sunken)} .ds-btn-ghost:focus-visible{outline:2px solid var(--accent,#b8392a);outline-offset:2px;}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label above, 40px control, reserved message line below.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-label\" for=\"ds-reg\">Registration number</label><input class=\"ds-input\" id=\"ds-reg\" placeholder=\"12345678\"><p class=\"ds-msg\">Only you and the coordinator see this.</p></div>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-field{display:flex;flex-direction:column;font-family:Geist,ui-sans-serif,system-ui,sans-serif;max-width:320px} .ds-label{margin-bottom:6px;font-size:0.9375rem;font-weight:500;color:var(--ink)} .ds-input{height:40px;padding:0 12px;border:1px solid var(--line-strong);border-radius:6px;background:var(--paper);color:var(--ink);font:inherit;font-size:0.9375rem;transition:border-color 150ms} .ds-input::placeholder{color:var(--muted)} .ds-input:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:0} .ds-msg{min-height:20px;padding-top:6px;margin:0;font-size:0.8125rem;line-height:1.25rem;color:var(--muted)}"
+    },
+    {
+      "name": "Badges",
+      "kind": "chip",
+      "refersTo": "badge-solid",
+      "description": "24px pills: solid for verified and live, outline for coming next, neutral for skills.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-badge ds-solid\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\"/><path d=\"m9 12 2 2 4-4\"/></svg>Verified student</span><span class=\"ds-badge ds-outline\">Coming next</span><span class=\"ds-badge ds-neutral\">React</span><span class=\"ds-badge ds-accent\">Matched</span></div>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-row{display:flex;gap:8px;flex-wrap:wrap;font-family:Geist,ui-sans-serif,system-ui,sans-serif;} .ds-badge{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 10px;border-radius:9999px;font-size:0.8125rem;font-weight:500;white-space:nowrap} .ds-solid{background:var(--ink);color:var(--canvas)} .ds-outline{border:1px solid var(--line);color:var(--muted)} .ds-neutral{background:var(--sunken);color:var(--ink-soft)} .ds-accent{background:var(--accent-soft);color:var(--accent)}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Paper surface, 1px line, 12px radius, no shadow; rows divided by rules.",
+      "html": "<div class=\"ds-panel\"><p class=\"ds-cap\">Your idea</p><p class=\"ds-title\">Lab slot alerts</p><p class=\"ds-body\">Find two builders who know React and Python.</p></div>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-panel{font-family:Geist,ui-sans-serif,system-ui,sans-serif;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;max-width:360px} .ds-cap{margin:0;font-size:0.8125rem;color:var(--muted)} .ds-title{margin:2px 0 0;font-size:1.375rem;line-height:1.875rem;font-weight:600;letter-spacing:-0.01em;color:var(--ink)} .ds-body{margin:8px 0 0;font-size:0.9375rem;line-height:1.5rem;color:var(--ink-soft)}"
+    },
+    {
+      "name": "App Navigation",
+      "kind": "nav",
+      "refersTo": "app-header",
+      "description": "64px header on canvas with a bottom rule; current link in ink.",
+      "html": "<nav class=\"ds-nav\"><span class=\"ds-brand\">Sandbox</span><a class=\"ds-link\" aria-current=\"page\" href=\"#\">Dashboard</a><a class=\"ds-link\" href=\"#\">Admin</a></nav>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-nav{display:flex;align-items:center;gap:4px;height:64px;padding:0 20px;background:var(--canvas);border-bottom:1px solid var(--line);font-family:Geist,ui-sans-serif,system-ui,sans-serif;} .ds-brand{font-family:\"Bricolage Grotesque\",Geist,sans-serif;font-weight:700;font-size:1.1875rem;color:var(--ink);margin-right:20px;letter-spacing:-0.02em} .ds-link{padding:8px 12px;border-radius:6px;font-size:0.9375rem;color:var(--muted);text-decoration:none;transition:color 150ms} .ds-link:hover{color:var(--ink)} .ds-link[aria-current=page]{color:var(--ink);font-weight:500} .ds-link:focus-visible{outline:2px solid var(--accent,#b8392a);outline-offset:2px;}"
+    },
+    {
+      "name": "Skill Proof",
+      "kind": "custom",
+      "refersTo": "skill-proof",
+      "description": "Skill then evidence; mono for code-read proof, muted italic for self-added.",
+      "html": "<ul class=\"ds-proof\"><li><span class=\"ds-skill\">React</span><span class=\"ds-ev\">4 original repos, 6 days ago</span></li><li><span class=\"ds-skill\">Python</span><span class=\"ds-ev\">2 original repos, 1 month ago</span></li><li><span class=\"ds-skill ds-self\">UI design</span><span class=\"ds-ev ds-self-ev\">Self-added, Figma portfolio</span></li></ul>",
+      "css": ":host{--navy:#14213d;--navy-deep:#0e1830;--cream:#f4ede0;--coral:#ff6b5b;--canvas:#f4ede0;--paper:#fbf8f2;--sunken:#ebe3d4;--ink:#14213d;--ink-soft:#2e3a55;--muted:#5b6478;--line:#ded4c2;--line-strong:#c9bda8;--action:#ff6b5b;--action-hover:#ff8577;--action-ink:#14213d;--accent:#b8392a;--accent-soft:#fbe2dc;--danger:#a3261b;--danger-soft:#f8ddd8} .ds-proof{list-style:none;margin:0;padding:0;font-family:Geist,ui-sans-serif,system-ui,sans-serif;font-size:0.8125rem;line-height:1.25rem} .ds-proof li{display:flex;gap:12px;align-items:baseline;margin-bottom:6px} .ds-skill{width:96px;font-weight:500;color:var(--ink)} .ds-ev{font-family:\"Geist Mono\",ui-monospace,monospace;color:var(--ink-soft)} .ds-self{color:var(--muted)} .ds-self-ev{font-family:inherit;font-style:italic;color:var(--muted)}"
+    },
+    {
+      "name": "Night Field with Commit Cells",
+      "kind": "custom",
+      "refersTo": "night-field",
+      "description": "Navy gradient, one coral bloom, commit-graph cells lit coral by activity.",
+      "html": "<div class=\"ds-night\"><div class=\"ds-strip\"><i></i><i class=\"l\" style=\"opacity:.4\"></i><i></i><i class=\"l\" style=\"opacity:.7\"></i><i class=\"l g\" style=\"opacity:1\"></i><i class=\"l\" style=\"opacity:.55\"></i><i></i><i class=\"l g\" style=\"opacity:.9\"></i></div><p class=\"ds-night-h\">Proof you can see at night.</p></div>",
+      "css": ".ds-night{padding:32px;border-radius:12px;color:#f4ede0;font-family:\"Bricolage Grotesque\",Geist,sans-serif;background:radial-gradient(55% 65% at 80% 92%,rgb(255 107 91/.5),transparent 62%),radial-gradient(35% 45% at 64% 70%,rgb(255 107 91/.14),transparent 70%),linear-gradient(180deg,#14213d 0%,#0e1830 100%)} .ds-strip{display:flex;gap:4px} .ds-strip i{width:10px;height:10px;border-radius:3px;background:rgb(244 237 224/.07)} .ds-strip i.l{background:#ff6b5b} .ds-strip i.g{box-shadow:0 0 14px 1px rgb(255 107 91/.4)} .ds-night-h{margin:16px 0 0;font-size:2rem;line-height:2.5rem;font-weight:600;letter-spacing:-0.02em}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Build Night",
+    "overview": "Sandbox is a campus after hours: a navy field where real activity glows. The public site lives at night (navy deepening to navy-deep, one coral light source, a faint commit-graph grid of rounded squares with a few cells lit), and the signed-in app lives in the calm of day (cream ground, navy ink, coral reserved for the action). Dark mode carries the night values into the app. The two scopes are one token set, swapped by `.theme-night` or `prefers-color-scheme: dark`, so every component works in both without its own variant.\n\nThe system is flat and ruled. Depth comes from tone (paper over cream, sunken fills) and from 1px lines, never from elevation shadows. On the night field, panels become frosted glass: translucent cream at low alpha with a cream hairline and a backdrop blur. Proof is the product, so evidence read from code is set in Geist Mono and everything self-claimed is visibly quieter.\n\nDensity is generous on the public site (80 to 112px section rhythm, display type up to 72px) and moderate in the app (24px panel padding, a single heading per page). Motion is a confident deceleration that tells the matching story once, then stops.",
+    "keyCharacteristics": [
+      "Founder-pinned palette: Navy, Cream, Coral; nothing else carries hue except the danger pair.",
+      "Two scopes, one token set: day (cream) for the app, night (navy field) for the public site, header, footer, sign-in and dark mode.",
+      "Coral is fill, glow and action; it never sets text on cream.",
+      "Flat surfaces separated by 1px rules; the only box-shadow is a lit commit cell's glow.",
+      "Mono type means \"read from code\"; italic muted means \"self-added\"."
+    ],
+    "rules": [
+      {
+        "name": "The Coral Never Writes On Cream Rule",
+        "body": "Coral on cream measures 2.4:1. Coral may fill, glow or mark, but any coral-family text on a cream or paper ground uses Deep Coral (4.9:1).",
+        "section": "colors"
+      },
+      {
+        "name": "The One Light Source Rule",
+        "body": "Each night section has exactly one coral bloom, repositioned per section (lower right in the hero, lower left in proof, low centre at the close) so it never reads as a stamp.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token-Only Rule",
+        "body": "Components use the semantic utilities (canvas, paper, sunken, ink, muted, line, action, accent), never raw hex, so the day and night scopes swap cleanly.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Means Proof Rule",
+        "body": "Geist Mono appears only on evidence read from code (repo names, proof lines, the match score). Self-added skills are muted italic Geist, never mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence-Case Label Rule",
+        "body": "Panel labels (\"Your idea\", \"Repositories read\") are muted caption in sentence case. No uppercase tracked labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Lift Rule",
+        "body": "Panels, menus, buttons and inputs carry no box-shadow. A dropdown separates by paper fill and a 1px line; glass separates by blur.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do set navy text on coral (5.7:1) and navy on cream (13.7:1); use Deep Coral (#B8392A, 4.9:1) for any coral-family text on cream.",
+      "Do wrap public hero, header, footer, sign-in and night sections in the night scope, and let dark mode reuse the same values.",
+      "Do separate sections with a 1px rule or a switch to the night field, and separate panel rows with 1px lines.",
+      "Do set evidence read from code in Geist Mono and label everything illustrative as illustrative.",
+      "Do reserve the message line under every field so errors never shift the layout.",
+      "Do give every animation a reduced-motion path that keeps state change visible."
+    ],
+    "donts": [
+      "Don't set coral text on cream or paper (2.4:1).",
+      "Don't add elevation shadows to panels, menus or buttons; the coral glow on lit cells is the only shadow.",
+      "Don't add hues beyond navy, cream, coral and the danger pair.",
+      "Don't place more than one coral light source in a night section, or the same bloom position in consecutive sections.",
+      "Don't use mono for self-claimed skills or for decoration.",
+      "Don't use uppercase tracked labels above headings; panel labels stay sentence-case captions."
+    ]
+  }
+}

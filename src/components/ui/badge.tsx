@@ -2,13 +2,14 @@ import { BadgeCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-type Tone = "neutral" | "accent" | "outline" | "danger";
+type Tone = "neutral" | "accent" | "outline" | "danger" | "solid";
 
 const tones: Record<Tone, string> = {
   neutral: "bg-sunken text-ink-soft",
   accent: "bg-accent-soft text-accent",
   outline: "border border-line text-muted",
   danger: "bg-danger-soft text-danger",
+  solid: "bg-ink text-canvas",
 };
 
 export function Badge({
@@ -39,7 +40,7 @@ export function Badge({
 /** The one trust signal every profile carries. Never shows the registration number. */
 export function VerifiedBadge({ className }: { className?: string }) {
   return (
-    <Badge tone="accent" className={className} icon={<BadgeCheck className="size-3.5" aria-hidden="true" />}>
+    <Badge tone="solid" className={className} icon={<BadgeCheck className="size-3.5" aria-hidden="true" />}>
       Verified student
     </Badge>
   );

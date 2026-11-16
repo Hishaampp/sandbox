@@ -14,6 +14,7 @@ export function Section({
   title,
   intro,
   layout = "stack",
+  tone = "day",
   children,
   className,
 }: {
@@ -21,13 +22,15 @@ export function Section({
   title: string;
   intro?: ReactNode;
   layout?: "stack" | "split";
+  /** "night" sets the section on the navy field (used sparingly, to pace the page). */
+  tone?: "day" | "night";
   children: ReactNode;
   className?: string;
 }) {
   const headingId = id ? `${id}-title` : undefined;
   const heading = (
     <div className="max-w-prose">
-      <h2 id={headingId} className="text-heading font-semibold text-balance text-ink">
+      <h2 id={headingId} className="font-display text-heading font-semibold text-balance text-ink">
         {title}
       </h2>
       {intro && <p className="mt-4 text-lead text-pretty text-muted">{intro}</p>}
@@ -35,7 +38,7 @@ export function Section({
   );
 
   return (
-    <section id={id} aria-labelledby={headingId} className={cn("scroll-mt-16 border-t border-line", className)}>
+    <section id={id} aria-labelledby={headingId} className={cn("scroll-mt-16", tone === "night" ? "theme-night night-field" : "border-t border-line", className)}>
       <Container className="py-20 md:py-28">
         {layout === "split" ? (
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">

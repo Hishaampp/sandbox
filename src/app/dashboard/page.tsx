@@ -144,7 +144,7 @@ async function DashboardContent() {
       <AppHeader viewer={viewer} current="dashboard" />
       <main id="main" className="flex-1">
         <Container className="py-12 md:py-16">
-          <h1 className="text-heading font-semibold text-ink">Welcome, {firstName(viewer.fullName)}</h1>
+          <h1 className="font-display text-heading font-semibold text-ink">Welcome, {firstName(viewer.fullName)}</h1>
           <p className="mt-2 text-body text-muted">
             {context || "Browse freely. Verify once when you're ready to post or join."}
           </p>
@@ -227,7 +227,7 @@ async function DashboardContent() {
                 <ol className="mt-4 space-y-4">
                   {verificationSteps.map((step, i) => (
                     <li key={step} className="flex gap-3 text-body-sm text-muted">
-                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-line-strong font-mono text-caption text-ink">
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-line-strong font-sans text-caption text-ink tabular-nums">
                         {i + 1}
                       </span>
                       <span className="pt-0.5">{step}</span>

@@ -1,29 +1,15 @@
-import {
-  BadgeCheck,
-  Building2,
-  EyeOff,
-  FolderGit2,
-  GitFork,
-  ImageOff,
-  KeyRound,
-  LockKeyhole,
-  ScrollText,
-  Search,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
-import type { ReactNode } from "react";
+import { BadgeCheck, ImageOff, KeyRound } from "lucide-react";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { MatchPreview } from "@/components/landing/match-preview";
 import { Section } from "@/components/landing/section";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
-import { Avatar } from "@/components/ui/avatar";
-import { VerifiedBadge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Panel } from "@/components/ui/panel";
 import { SkillProofList } from "@/components/ui/skill-proof";
+import { cn } from "@/lib/cn";
 
 const trust = [
   { icon: BadgeCheck, text: "Verify once, the first time you post or join" },
@@ -46,124 +32,108 @@ const problems = [
   },
 ];
 
+/** `live` marks what works today; the rest is labelled so nobody is promised what isn't built yet. */
 const steps = [
-  { title: "Sign in with Google", body: "Browse ideas and profiles straight away." },
-  { title: "Post or ask to join", body: "Owners post an idea and the skills it needs. Builders apply." },
-  { title: "Verify once", body: "Confirm you're a student the first time you post or join. Never again." },
-  { title: "Get matched", body: "Owners see builders ranked by proven skills, with the reason for each." },
-  { title: "Form the team", body: "Accepted teammates see the full project plan and start building." },
+  { title: "Sign in with Google", body: "Browse straight away. No forms first.", live: true },
+  { title: "Verify once", body: "Your college details and an ID photo, checked by a coordinator.", live: true },
+  { title: "Post or ask to join", body: "Owners post an idea and the skills it needs. Builders apply.", live: false },
+  { title: "Get matched", body: "Owners see builders ranked by proven skills, with the reason for each.", live: false },
+  { title: "Form the team", body: "Accepted teammates see the full project plan and start building.", live: false },
 ];
 
-const proofPoints = [
-  {
-    icon: FolderGit2,
-    title: "Connected through GitHub's own sign-in",
-    body: "Nobody can type in a username and claim someone else's work.",
-  },
-  {
-    icon: GitFork,
-    title: "Only original projects count",
-    body: "Forks and empty repos are left out. Recent work counts for more.",
-  },
-  {
-    icon: ScrollText,
-    title: "Every skill shows its proof",
-    body: "Owners see why someone fits. Skills added by hand are labelled and count less.",
-  },
-];
+/** Illustrative repositories, and what Sandbox does with each. */
+const repos = [
+  { name: "lab-slot-alerts", lang: "TypeScript", kind: "original", pushed: "6 days ago" },
+  { name: "campus-map", lang: "TypeScript", kind: "original", pushed: "3 weeks ago" },
+  { name: "attendance-bot", lang: "Python", kind: "original", pushed: "1 month ago" },
+  { name: "react", lang: "JavaScript", kind: "fork", pushed: "8 months ago" },
+  { name: "untitled-project", lang: "—", kind: "empty", pushed: "1 year ago" },
+] as const;
 
-const privacy = [
+const ledger = [
   {
-    icon: KeyRound,
-    title: "No passwords collected",
-    body: "University login happens on the university's own page. We only receive a confirmation.",
+    what: "Registration number",
+    sees: "You and the coordinator",
+    keep: "Kept to allow one account per student",
+    deleted: "With your account",
   },
   {
-    icon: EyeOff,
-    title: "Registration numbers stay hidden",
-    body: "We check them to keep one account per student. Others only see a Verified student badge.",
+    what: "ID card photo",
+    sees: "Only the coordinator",
+    keep: "Until they approve or reject",
+    deleted: "Right after their decision",
   },
   {
-    icon: ImageOff,
-    title: "ID photos are deleted",
-    body: "A coordinator reviews your ID card photo once. The photo is removed as soon as they decide.",
+    what: "UMS password",
+    sees: "Nobody",
+    keep: "Never asked for",
+    deleted: "Not collected",
   },
   {
-    icon: LockKeyhole,
-    title: "Ideas stay protected",
-    body: "Only a short summary is public. The full plan is shared with accepted teammates only.",
+    what: "An idea's full plan",
+    sees: "Accepted teammates only",
+    keep: "Kept with the idea",
+    deleted: "When the owner deletes it",
   },
 ];
 
 const gains = [
   {
-    icon: Building2,
     title: "More student projects get built",
-    body: "Ideas that used to stall find a team and reach a working prototype.",
+    body: "Ideas that used to stall can find a team and reach a working prototype.",
+    planned: false,
   },
   {
-    icon: Users,
     title: "Teams across departments",
     body: "Computer science, design and management students meet in one place.",
+    planned: false,
   },
   {
-    icon: Search,
     title: "Faculty can find skilled students",
     body: "Search verified students by proven skill for research and department projects.",
+    planned: true,
   },
   {
-    icon: ShieldCheck,
     title: "A record of student innovation",
-    body: "Every team and finished project is logged, ready for reports and accreditation.",
+    body: "Teams and finished projects logged for reports and accreditation.",
+    planned: true,
   },
 ];
-
-function IconItem({ icon: Icon, title, children }: { icon: typeof Users; title: string; children: ReactNode }) {
-  return (
-    <div className="flex gap-4">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-control border border-line bg-paper text-ink">
-        <Icon className="size-5" aria-hidden="true" />
-      </span>
-      <div>
-        <h3 className="font-medium text-ink">{title}</h3>
-        <p className="mt-1 text-body-sm text-muted">{children}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function HomePage() {
   return (
     <>
       <SiteHeader />
       <main id="main" className="flex-1">
-        {/* Hero */}
-        <Container className="grid grid-cols-1 items-center gap-14 pt-16 pb-20 md:pt-24 md:pb-28 lg:grid-cols-2 lg:gap-16 xl:gap-24">
-          <div className="max-w-prose">
-            <h1 className="text-display-sm font-semibold text-balance text-ink md:text-display xl:text-display-lg">
-              Find teammates by what they&rsquo;ve built, not what they claim.
-            </h1>
-            <p className="mt-6 text-lead text-pretty text-muted">
-              Sandbox is where verified students on your campus post project ideas and find people whose skills
-              are proven by their real GitHub work.
-            </p>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-start">
-              <GoogleSignInButton className="sm:w-auto" />
-              <ButtonLink href="#how-it-works" variant="secondary" size="lg">
-                How it works
-              </ButtonLink>
+        {/* Hero: the night field */}
+        <div className="theme-night night-field">
+          <Container className="grid grid-cols-1 items-center gap-16 pt-16 pb-24 md:pt-24 md:pb-32 lg:grid-cols-2 lg:gap-16 xl:gap-24">
+            <div className="max-w-prose">
+              <h1 className="font-display text-display-sm font-semibold text-balance text-ink md:text-display xl:text-display-lg">
+                Find teammates by what they&rsquo;ve built, not what they claim.
+              </h1>
+              <p className="mt-6 text-lead text-pretty text-muted">
+                Sandbox is where verified students on your campus post project ideas and find people whose skills are
+                proven by their real GitHub work.
+              </p>
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-start">
+                <GoogleSignInButton className="sm:w-auto" />
+                <ButtonLink href="#how-it-works" variant="ghost" size="lg" className="border border-line-strong">
+                  How it works
+                </ButtonLink>
+              </div>
+              <ul className="mt-8 space-y-2.5">
+                {trust.map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex items-center gap-2.5 text-body-sm text-ink-soft">
+                    <Icon className="size-4 shrink-0 text-ink-soft" aria-hidden="true" />
+                    {text}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="mt-8 space-y-2.5">
-              {trust.map(({ icon: Icon, text }) => (
-                <li key={text} className="flex items-center gap-2.5 text-body-sm text-ink-soft">
-                  <Icon className="size-4 shrink-0 text-accent" aria-hidden="true" />
-                  {text}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <MatchPreview />
-        </Container>
+            <MatchPreview />
+          </Container>
+        </div>
 
         {/* Problem */}
         <Section id="problem" layout="split" title="Good student ideas stall without a team.">
@@ -181,79 +151,143 @@ export default function HomePage() {
         <Section
           id="how-it-works"
           title="From idea to team in five steps"
-          intro="Browsing is open to everyone. Verification happens only when you first post an idea or ask to join one."
+          intro="Sign-in and verification work today. Posting, matching and teams open next, starting at LPU."
         >
           <ol className="grid grid-cols-1 gap-8 md:grid-cols-5 md:gap-6">
             {steps.map((s, i) => (
               <li key={s.title} className="relative md:pt-10">
-                <span className="hidden md:absolute md:inset-x-0 md:top-3.5 md:block md:h-px md:bg-line" aria-hidden="true" />
-                <span className="relative flex size-7 items-center justify-center rounded-full border border-line-strong bg-canvas font-mono text-caption font-medium text-ink md:absolute md:top-0 md:left-0">
+                <span
+                  className="hidden md:absolute md:inset-x-0 md:top-3.5 md:block md:h-px md:bg-line"
+                  aria-hidden="true"
+                />
+                <span
+                  className={cn(
+                    "relative flex size-7 items-center justify-center rounded-full border text-caption font-medium tabular-nums md:absolute md:top-0 md:left-0",
+                    s.live ? "border-ink bg-ink text-canvas" : "border-line-strong bg-canvas text-ink",
+                  )}
+                >
                   {i + 1}
                 </span>
                 <h3 className="mt-3 font-medium text-ink md:mt-0">{s.title}</h3>
                 <p className="mt-1.5 text-body-sm text-muted">{s.body}</p>
+                <p className="mt-3">
+                  {s.live ? <Badge tone="solid">Live now</Badge> : <Badge tone="outline">Coming next</Badge>}
+                </p>
               </li>
             ))}
           </ol>
         </Section>
 
-        {/* Proof of skill */}
+        {/* Proof of skill: the derivation, shown */}
         <Section
           id="proof"
+          tone="night"
+          className="night-field-left"
           title="Skills come from real code, not claims"
-          intro="When a student connects GitHub, Sandbox reads their own projects once and turns them into skills with proof."
+          intro="Coming next: connect GitHub through GitHub's own sign-in, and Sandbox reads your own projects once and turns them into skills with proof."
         >
-          <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
-            <div className="space-y-8">
-              {proofPoints.map((p) => (
-                <IconItem key={p.title} icon={p.icon} title={p.title}>
-                  {p.body}
-                </IconItem>
-              ))}
-            </div>
-            <figure aria-label="Example student profile">
-              <Panel className="p-6">
-                <div className="flex items-start gap-4">
-                  <Avatar name="Simran Kaur" size="lg" />
-                  <div className="min-w-0">
-                    <p className="text-title font-semibold text-ink">Simran Kaur</p>
-                    <p className="text-body-sm text-muted">Computer Science, 3rd year</p>
-                    <VerifiedBadge className="mt-2" />
-                  </div>
-                </div>
-                <div className="mt-6 border-t border-line pt-5">
-                  <p className="mb-3 text-caption text-muted">Skills and their proof</p>
-                  <SkillProofList
-                    items={[
-                      { skill: "React", source: "github", evidence: "4 original repos, 6 days ago" },
-                      { skill: "TypeScript", source: "github", evidence: "3 original repos, 6 days ago" },
-                      { skill: "Python", source: "github", evidence: "2 original repos, 1 month ago" },
-                      { skill: "UI design", source: "self", evidence: "Self-added, Figma portfolio" },
-                    ]}
-                  />
-                </div>
-                <div className="mt-6 border-t border-line pt-5">
-                  <p className="text-caption text-muted">Built on Sandbox</p>
-                  <p className="mt-1 text-body-sm text-ink">Built Lab slot alerts with React and Python</p>
-                </div>
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-10">
+            <figure aria-label="Example: repositories Sandbox reads">
+              <Panel className="overflow-hidden backdrop-blur-xl">
+                <p className="border-b border-line px-5 py-3 text-caption text-muted">Repositories read</p>
+                <ul className="divide-y divide-line">
+                  {repos.map((r) => {
+                    const counted = r.kind === "original";
+                    return (
+                      <li
+                        key={r.name}
+                        className={cn(
+                          "grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 px-5 py-3 sm:grid-cols-[minmax(0,1fr)_7rem_7rem]",
+                          !counted && "text-muted",
+                        )}
+                      >
+                        <span className={cn("truncate font-mono text-body-sm", counted ? "text-ink" : "line-through")}>
+                          {r.name}
+                        </span>
+                        <span className="hidden text-caption sm:block">{r.lang}</span>
+                        <span className="text-right text-caption">
+                          {counted ? (
+                            r.pushed
+                          ) : (
+                            <Badge tone="outline">{r.kind === "fork" ? "Fork, left out" : "Empty, left out"}</Badge>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
               </Panel>
-              <figcaption className="mt-3 text-caption text-muted">An illustrative profile.</figcaption>
+              <figcaption className="mt-3 text-caption text-muted">
+                Only original, non-empty repositories count. A fork is someone else&rsquo;s code.
+              </figcaption>
+            </figure>
+
+            <figure aria-label="Example: the skills those repositories become">
+              <Panel className="p-5 backdrop-blur-xl">
+                <p className="mb-4 text-caption text-muted">Skills with proof</p>
+                <SkillProofList
+                  items={[
+                    { skill: "TypeScript", source: "github", evidence: "2 original repos, 6 days ago" },
+                    { skill: "Python", source: "github", evidence: "1 original repo, 1 month ago" },
+                    { skill: "UI design", source: "self", evidence: "Self-added, Figma portfolio" },
+                  ]}
+                />
+                <dl className="mt-6 space-y-3 border-t border-line pt-5 text-body-sm">
+                  <div>
+                    <dt className="font-medium text-ink">Recent work counts for more</dt>
+                    <dd className="text-muted">A push in the last 90 days scores higher than an old one.</dd>
+                  </div>
+                  <div>
+                    <dt className="font-medium text-ink">Typed skills are labelled</dt>
+                    <dd className="text-muted">Added by hand, shown as self-added, and counted less.</dd>
+                  </div>
+                  <div>
+                    <dt className="font-medium text-ink">Nobody can claim your work</dt>
+                    <dd className="text-muted">GitHub is linked through its own sign-in, never a typed username.</dd>
+                  </div>
+                </dl>
+              </Panel>
+              <figcaption className="mt-3 text-caption text-muted">Illustrative repositories and skills.</figcaption>
             </figure>
           </div>
         </Section>
 
-        {/* Privacy */}
+        {/* Privacy: a ledger, not a list of promises */}
         <Section
           id="privacy"
           layout="split"
           title="Built to protect students"
-          intro="Trust is the product. Every rule below is enforced by the database, not just the page."
+          intro="Today you verify with an ID photo. University sign-in arrives once LPU approves it. Every rule here is enforced by the database, not just the page."
         >
-          <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
-            {privacy.map((p) => (
-              <IconItem key={p.title} icon={p.icon} title={p.title}>
-                {p.body}
-              </IconItem>
+          <div role="table" aria-label="What Sandbox sees, keeps and deletes" className="border-t border-ink">
+            <div role="row" className="hidden grid-cols-4 gap-6 border-b border-line py-3 text-caption text-muted md:grid">
+              <span role="columnheader">Data</span>
+              <span role="columnheader">Who sees it</span>
+              <span role="columnheader">What we keep</span>
+              <span role="columnheader">When it&rsquo;s deleted</span>
+            </div>
+            {ledger.map((row) => (
+              <div
+                key={row.what}
+                role="row"
+                className="grid grid-cols-1 gap-1 border-b border-line py-4 md:grid-cols-4 md:gap-6"
+              >
+                <span role="cell" className="font-medium text-ink">
+                  {row.what}
+                </span>
+                <span role="cell" className="text-body-sm text-ink-soft">
+                  <span className="text-muted md:sr-only">Who sees it: </span>
+                  {row.sees}
+                </span>
+                <span role="cell" className="text-body-sm text-ink-soft">
+                  <span className="text-muted md:sr-only">What we keep: </span>
+                  {row.keep}
+                </span>
+                <span role="cell" className="text-body-sm text-ink-soft">
+                  <span className="text-muted md:sr-only">Deleted: </span>
+                  {row.deleted}
+                </span>
+              </div>
             ))}
           </div>
         </Section>
@@ -265,23 +299,33 @@ export default function HomePage() {
           title="What the university gains"
           intro="Sandbox is always free for students: verification, posting ideas and matching. No data selling, no ads."
         >
-          <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2">
+          <ul className="border-t border-ink">
             {gains.map((g) => (
-              <IconItem key={g.title} icon={g.icon} title={g.title}>
-                {g.body}
-              </IconItem>
+              <li
+                key={g.title}
+                className="grid grid-cols-1 gap-1 border-b border-line py-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)_6rem] md:items-baseline md:gap-6"
+              >
+                <span className="font-medium text-ink">{g.title}</span>
+                <span className="text-body-sm text-muted">{g.body}</span>
+                <span>{g.planned && <Badge tone="outline">Planned</Badge>}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </Section>
 
         {/* Closing */}
-        <section aria-labelledby="closing-title" className="border-t border-line">
-          <Container className="flex flex-col items-start justify-between gap-8 py-20 md:flex-row md:items-center md:py-24">
-            <div className="max-w-prose">
-              <h2 id="closing-title" className="text-heading font-semibold text-balance text-ink">
+        <section aria-labelledby="closing-title" className="theme-night night-field night-field-low">
+          <Container className="flex flex-col items-start justify-between gap-10 py-24 md:flex-row md:items-end md:py-32">
+            <div className="max-w-2xl">
+              <h2
+                id="closing-title"
+                className="font-display text-display-sm font-semibold text-balance text-ink md:text-display"
+              >
                 Your next teammate is already on campus.
               </h2>
-              <p className="mt-3 text-lead text-muted">Sign in, look around, and verify only when you&rsquo;re ready to act.</p>
+              <p className="mt-4 text-lead text-muted">
+                Sign in, look around, and verify only when you&rsquo;re ready to act.
+              </p>
             </div>
             <GoogleSignInButton className="md:w-auto" />
           </Container>

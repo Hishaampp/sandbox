@@ -1,6 +1,7 @@
 import { Clock, Users } from "lucide-react";
 import type React from "react";
 import { Avatar } from "@/components/ui/avatar";
+import { ActivityStrip, CommitCluster } from "./commit-graph";
 import { Badge, VerifiedBadge } from "@/components/ui/badge";
 import { Panel } from "@/components/ui/panel";
 import { SkillProofList, type SkillProofItem } from "@/components/ui/skill-proof";
@@ -8,6 +9,8 @@ import { SkillProofList, type SkillProofItem } from "@/components/ui/skill-proof
 type Match = {
   name: string;
   meta: string;
+  /** Twelve weeks of commit activity, 0 to 1 (illustrative). */
+  weeks: number[];
   pct: number;
   matched: string;
   proof: SkillProofItem[];
@@ -17,6 +20,7 @@ const matches: Match[] = [
   {
     name: "Simran Kaur",
     meta: "Computer Science, 3rd year",
+    weeks: [0.3, 0, 0.5, 0.7, 0.4, 0.9, 0.6, 0, 0.8, 1, 0.7, 0.9],
     pct: 92,
     matched: "3 of 3 skills",
     proof: [
@@ -28,6 +32,7 @@ const matches: Match[] = [
   {
     name: "Aarav Mehta",
     meta: "Electronics, 2nd year",
+    weeks: [0, 0.2, 0, 0, 0.4, 0.3, 0.6, 0.5, 0, 0.7, 0.9, 1],
     pct: 71,
     matched: "2 of 3 skills",
     proof: [
@@ -41,7 +46,8 @@ const matches: Match[] = [
 export function MatchPreview() {
   return (
     <figure aria-label="Example: ranked matches for an idea" className="relative">
-      <Panel className="overflow-hidden">
+      <CommitCluster className="absolute -top-12 right-2 -z-10 lg:-top-16 lg:right-auto lg:-left-20" startMs={150} />
+      <Panel className="overflow-hidden backdrop-blur-xl">
         <div className="border-b border-line p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
@@ -86,9 +92,16 @@ export function MatchPreview() {
                       <VerifiedBadge />
                     </div>
                     <p className="text-caption text-muted">{m.meta}</p>
+                    <div className="mt-2">
+                      <ActivityStrip
+                        weeks={m.weeks}
+                        startMs={arriveAt + 200}
+                        label={`Commit activity over the last 12 weeks for ${m.name} (illustrative)`}
+                      />
+                    </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-mono text-title font-semibold text-accent tabular-nums">
+                    <p className="font-mono text-title font-semibold text-ink tabular-nums">
                       <span className="sr-only">{m.pct}%</span>
                       <span
                         aria-hidden="true"
@@ -116,7 +129,7 @@ export function MatchPreview() {
         </ol>
       </Panel>
       <figcaption className="mt-3 text-caption text-muted">
-        An example of what an idea owner sees. Names and repos are illustrative.
+        An example of what an idea owner will see once matching opens. Names, repos and activity are illustrative.
       </figcaption>
     </figure>
   );

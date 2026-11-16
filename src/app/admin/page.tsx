@@ -55,7 +55,7 @@ async function AdminContent() {
       <AppHeader viewer={viewer} current="admin" />
       <main id="main" className="flex-1">
         <Container className="py-12 md:py-16">
-          <h1 className="text-heading font-semibold text-ink">Verification queue</h1>
+          <h1 className="font-display text-heading font-semibold text-ink">Verification queue</h1>
           <p className="mt-2 text-body text-muted">
             Check each ID photo against the details, then approve or reject. Photos are deleted after your decision.
           </p>

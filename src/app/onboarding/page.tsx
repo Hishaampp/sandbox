@@ -105,7 +105,7 @@ export default function OnboardingPage() {
             <ol className="mt-4 space-y-5">
               {nextSteps.map((step, i) => (
                 <li key={step.title} className="flex gap-3">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-line-strong font-mono text-caption text-ink">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-line-strong font-sans text-caption text-ink tabular-nums">
                     {i + 1}
                   </span>
                   <div>
