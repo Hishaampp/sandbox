@@ -162,6 +162,29 @@ select pg_temp.act_as('00000000-0000-0000-0000-00000000000c');
 select pg_temp.check('outsider still cannot read full details', (select count(*) = 0 from public.idea_details));
 select pg_temp.check('outsider cannot read others'' requests', (select count(*) = 0 from public.requests));
 
+
+-- GitHub sync: server-only, identity-safe, upgrades self-added skills.
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
+select pg_temp.expect_error('student cannot call the GitHub sync',
+  $$select public.sync_github_profile(auth.uid(), 999000001, 'builder-b', '[]', '[{"name":"Rust","repo_count":9,"last_pushed_at":"2026-11-01T00:00:00Z","stars":0}]')$$);
+select pg_temp.act_as_postgres();
+set local role service_role;
+select public.sync_github_profile('00000000-0000-0000-0000-00000000000b', 999000001, 'Builder-B',
+  '[{"github_id":1,"name":"app","url":"https://github.com/builder-b/app","description":null,"main_language":"TypeScript","languages":{"TypeScript":100},"topics":[],"frameworks":["React"],"stars":2,"pushed_at":"2026-11-10T00:00:00Z"}]',
+  '[{"name":"TypeScript","repo_count":1,"last_pushed_at":"2026-11-10T00:00:00Z","stars":2},{"name":"UI Design","repo_count":1,"last_pushed_at":"2026-11-10T00:00:00Z","stars":0}]');
+reset role;
+select pg_temp.check('sync stores repos and links the GitHub account',
+  (select count(*) = 1 from public.repos where profile_id = '00000000-0000-0000-0000-00000000000b')
+  and (select github_username = 'Builder-B' and github_id = 999000001 from public.profiles where id = '00000000-0000-0000-0000-00000000000b'));
+select pg_temp.check('a GitHub-proven skill replaces the self-added one with the same name',
+  (select source = 'github' and evidence = '1 original repo' and score > 5 from public.skills
+   where profile_id = '00000000-0000-0000-0000-00000000000b' and slug = 'ui-design'));
+select pg_temp.check('earlier GitHub skills are replaced, not duplicated',
+  (select count(*) = 2 from public.skills where profile_id = '00000000-0000-0000-0000-00000000000b' and source = 'github'));
+set local role service_role;
+select pg_temp.expect_error('one GitHub account cannot back two students',
+  $$select public.sync_github_profile('00000000-0000-0000-0000-00000000000c', 999000001, 'Builder-B', '[]', '[]')$$);
+reset role;
 select pg_temp.act_as_postgres();
 \echo 'ALL CHECKS PASSED'
 rollback;

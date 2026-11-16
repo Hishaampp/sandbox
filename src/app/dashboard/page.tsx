@@ -11,10 +11,11 @@ import { Panel } from "@/components/ui/panel";
 import { firstName, requireViewer, type Viewer } from "@/lib/auth";
 import { formatDate, formatDateTime, yearLabel } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
+import { SkillsPanel } from "./skills-panel";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-type LatestSubmission = { submitted_at: string; status: string; rejection_reason: string | null } | null;
+type LatestSubmission = { submitted_at: string; status: string; rejection_reason: string | null } | null | "error";
 
 async function latestSubmission(viewerId: string): Promise<LatestSubmission> {
   const supabase = await createClient();
@@ -25,11 +26,19 @@ async function latestSubmission(viewerId: string): Promise<LatestSubmission> {
     .order("submitted_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (error) throw new Error(`Could not load your verification: ${error.message}`);
+  if (error) return "error"; // shown inline; the rest of the dashboard still works
   return data;
 }
 
-function VerificationPanel({ viewer, submission }: { viewer: Viewer; submission: LatestSubmission }) {
+function VerificationPanel({ viewer, submission: loaded }: { viewer: Viewer; submission: LatestSubmission }) {
+  if (loaded === "error" && viewer.status !== "approved" && viewer.status !== "unverified") {
+    return (
+      <Alert tone="danger" title="Your verification details couldn't be loaded">
+        Refresh the page. Your submission is safe.
+      </Alert>
+    );
+  }
+  const submission = loaded === "error" ? null : loaded;
   if (viewer.status === "approved") {
     return (
       <Panel className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
@@ -133,8 +142,35 @@ function Step({
   );
 }
 
-async function DashboardContent() {
+const githubMessages: Record<string, { tone: "info" | "danger"; title: string; body: string }> = {
+  connected: {
+    tone: "info",
+    title: "GitHub connected",
+    body: "Your skills were read from your public repositories. Refresh any time after you push new work.",
+  },
+  cancelled: {
+    tone: "info",
+    title: "GitHub wasn't connected",
+    body: "You closed GitHub before finishing. Try again whenever you like.",
+  },
+  taken: {
+    tone: "danger",
+    title: "That GitHub account is linked to another student",
+    body: "Each GitHub account can back only one Sandbox profile. Use your own GitHub account.",
+  },
+  mismatch: {
+    tone: "danger",
+    title: "That wasn't the linked GitHub account",
+    body: "Sign in to GitHub with the account you connected to Sandbox, then refresh again.",
+  },
+  not_linked: { tone: "danger", title: "GitHub isn't linked yet", body: "Use Connect GitHub to link it first." },
+  github: { tone: "danger", title: "GitHub didn't respond", body: "Nothing was changed. Try again in a moment." },
+};
+
+async function DashboardContent({ searchParams }: { searchParams: PageProps<"/dashboard">["searchParams"] }) {
   const viewer = await requireViewer("/dashboard");
+  const params = await searchParams;
+  const flash = typeof params.github === "string" ? githubMessages[params.github] : undefined;
   const submission = await latestSubmission(viewer.id);
   const verified = viewer.status === "approved";
   const context = [viewer.collegeName, viewer.department, yearLabel(viewer.year)].filter(Boolean).join(", ");
@@ -148,6 +184,12 @@ async function DashboardContent() {
           <p className="mt-2 text-body text-muted">
             {context || "Browse freely. Verify once when you're ready to post or join."}
           </p>
+
+          {flash && (
+            <Alert tone={flash.tone} title={flash.title} className="mt-8">
+              {flash.body}
+            </Alert>
+          )}
 
           <div className="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
             <div className="space-y-12 lg:col-span-8">
@@ -177,22 +219,30 @@ async function DashboardContent() {
                       }
                     />
                     <Step
-                      done={false}
+                      done={Boolean(viewer.githubUsername)}
                       icon={<FolderGit2 className="size-4" />}
                       title="Connect GitHub"
-                      body="Your skills build themselves from your own repositories, with proof."
-                      state={<Badge tone="outline">Coming soon</Badge>}
+                      body="Your skills build themselves from your own public repositories, with proof."
+                      state={
+                        viewer.githubUsername ? null : (
+                          <ButtonLink href="#skills-title" variant="secondary" size="sm">
+                            Connect
+                          </ButtonLink>
+                        )
+                      }
                     />
                     <Step
                       done={false}
                       icon={<Lightbulb className="size-4" />}
                       title="Post an idea or join one"
                       body="Find teammates by what they've built, or join a project that fits your skills."
-                      state={<Badge tone="outline">Coming soon</Badge>}
+                      state={<Badge tone="outline">Coming next</Badge>}
                     />
                   </ol>
                 </Panel>
               </section>
+
+              <SkillsPanel viewer={viewer} />
             </div>
 
             <aside className="space-y-6 lg:col-span-4" aria-label="Your account">
@@ -219,7 +269,18 @@ async function DashboardContent() {
                       <dd className="text-right text-ink">{formatDate(viewer.verifiedUntil)}</dd>
                     </div>
                   )}
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-muted">GitHub</dt>
+                    <dd className="truncate text-right text-ink">
+                      {viewer.githubUsername ? `@${viewer.githubUsername}` : "Not connected"}
+                    </dd>
+                  </div>
                 </dl>
+                {viewer.username && (
+                  <ButtonLink href={`/u/${viewer.username}`} variant="secondary" size="sm" className="mt-5 w-full">
+                    View your public profile
+                  </ButtonLink>
+                )}
               </Panel>
 
               <Panel className="p-6">
@@ -277,10 +338,10 @@ function DashboardFallback() {
   );
 }
 
-export default function DashboardPage() {
+export default function DashboardPage({ searchParams }: PageProps<"/dashboard">) {
   return (
     <Suspense fallback={<DashboardFallback />}>
-      <DashboardContent />
+      <DashboardContent searchParams={searchParams} />
     </Suspense>
   );
 }

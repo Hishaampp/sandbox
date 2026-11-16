@@ -17,6 +17,10 @@ export type Viewer = {
   collegeName: string | null;
   department: string | null;
   year: number | null;
+  username: string | null;
+  githubUsername: string | null;
+  githubSyncedAt: string | null;
+  portfolioUrl: string | null;
 };
 
 /**
@@ -33,7 +37,9 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, full_name, avatar_url, verification_status, verified_until, is_admin, department, year, colleges(name)")
+    .select(
+      "id, full_name, avatar_url, verification_status, verified_until, is_admin, department, year, username, github_username, github_synced_at, portfolio_url, colleges(name)",
+    )
     .eq("id", claims.sub)
     .maybeSingle();
 
@@ -51,6 +57,10 @@ export const getViewer = cache(async (): Promise<Viewer | null> => {
     collegeName: profile.colleges?.name ?? null,
     department: profile.department,
     year: profile.year,
+    username: profile.username,
+    githubUsername: profile.github_username,
+    githubSyncedAt: profile.github_synced_at,
+    portfolioUrl: profile.portfolio_url,
   };
 });
 

@@ -754,6 +754,16 @@ export type Database = {
         Returns: number
       }
       slugify: { Args: { value: string }; Returns: string }
+      sync_github_profile: {
+        Args: {
+          p_github_id: number
+          p_github_username: string
+          p_profile_id: string
+          p_repos: Json
+          p_skills: Json
+        }
+        Returns: number
+      }
       withdraw_request: {
         Args: { p_request_id: string }
         Returns: {

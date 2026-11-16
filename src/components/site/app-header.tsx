@@ -31,7 +31,7 @@ function StatusBadge({ status }: { status: Viewer["status"] }) {
 }
 
 /** Header for signed-in pages: where you are, your status, your account. */
-export function AppHeader({ viewer, current }: { viewer: Viewer; current: Section }) {
+export function AppHeader({ viewer, current }: { viewer: Viewer; current?: Section }) {
   const links: { href: string; label: string; section: Section }[] = [
     { href: "/dashboard", label: "Dashboard", section: "dashboard" },
     ...(viewer.isAdmin ? [{ href: "/admin", label: "Admin", section: "admin" as const }] : []),

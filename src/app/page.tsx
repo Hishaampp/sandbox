@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Panel } from "@/components/ui/panel";
+import { RepoList } from "@/components/ui/repo-list";
 import { SkillProofList } from "@/components/ui/skill-proof";
 import { cn } from "@/lib/cn";
 
@@ -184,38 +185,20 @@ export default function HomePage() {
           tone="night"
           className="night-field-left"
           title="Skills come from real code, not claims"
-          intro="Coming next: connect GitHub through GitHub's own sign-in, and Sandbox reads your own projects once and turns them into skills with proof."
+          intro="Connect GitHub through GitHub's own sign-in, and Sandbox reads your own public projects and turns them into skills with proof."
         >
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-10">
             <figure aria-label="Example: repositories Sandbox reads">
               <Panel className="overflow-hidden backdrop-blur-xl">
                 <p className="border-b border-line px-5 py-3 text-caption text-muted">Repositories read</p>
-                <ul className="divide-y divide-line">
-                  {repos.map((r) => {
-                    const counted = r.kind === "original";
-                    return (
-                      <li
-                        key={r.name}
-                        className={cn(
-                          "grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 px-5 py-3 sm:grid-cols-[minmax(0,1fr)_7rem_7rem]",
-                          !counted && "text-muted",
-                        )}
-                      >
-                        <span className={cn("truncate font-mono text-body-sm", counted ? "text-ink" : "line-through")}>
-                          {r.name}
-                        </span>
-                        <span className="hidden text-caption sm:block">{r.lang}</span>
-                        <span className="text-right text-caption">
-                          {counted ? (
-                            r.pushed
-                          ) : (
-                            <Badge tone="outline">{r.kind === "fork" ? "Fork, left out" : "Empty, left out"}</Badge>
-                          )}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
+                <RepoList
+                  items={repos.map((r) => ({
+                    name: r.name,
+                    language: r.lang === "—" ? null : r.lang,
+                    detail: r.pushed,
+                    excluded: r.kind === "fork" ? "Fork, left out" : r.kind === "empty" ? "Empty, left out" : undefined,
+                  }))}
+                />
               </Panel>
               <figcaption className="mt-3 text-caption text-muted">
                 Only original, non-empty repositories count. A fork is someone else&rsquo;s code.
