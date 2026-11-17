@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { MatchRow, type Match } from "@/components/ideas/match-row";
 import { AppHeader, AppHeaderFallback } from "@/components/site/app-header";
+import { ReportForm } from "@/components/safety/safety-controls";
 import { Alert } from "@/components/ui/alert";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -12,11 +13,12 @@ import { Container } from "@/components/ui/container";
 import { Panel } from "@/components/ui/panel";
 import { requireViewer } from "@/lib/auth";
 import { formatDateTime, timeAgo, yearLabel } from "@/lib/format";
-import { skillNamer, statusLabel, type IdeaStatus } from "@/lib/ideas";
+import { getTeamCounts, skillNamer, statusLabel, type IdeaStatus } from "@/lib/ideas";
 import { createClient } from "@/lib/supabase/server";
 import {
   ApplyForm,
   InviteButton,
+  RemoveMemberButton,
   PlanForm,
   PostedNotice,
   RespondButtons,
@@ -47,6 +49,7 @@ async function IdeaContent({
   const query = await searchParams;
   const posted = query.posted === "1";
   const planFailed = query.plan === "failed";
+  const leftTeam = query.left === "1";
   const supabase = await createClient();
 
   const validId = /^[0-9a-f-]{36}$/i.test(id);
@@ -85,7 +88,7 @@ async function IdeaContent({
   const isOwner = idea.owner_id === viewer.id;
   const name = await skillNamer();
 
-  const [teamRes, detailsRes, myRequestRes, mySkillsRes] = await Promise.all([
+  const [teamRes, detailsRes, myRequestRes, mySkillsRes, teamCounts] = await Promise.all([
     supabase
       .from("team_members")
       .select("profile_id, role, joined_at, profiles(full_name, username, avatar_url, department, year)")
@@ -99,13 +102,16 @@ async function IdeaContent({
       .eq("profile_id", viewer.id)
       .maybeSingle(),
     supabase.from("skills").select("slug").eq("profile_id", viewer.id),
+    getTeamCounts([idea.id]),
   ]);
 
   if (teamRes.error || detailsRes.error || myRequestRes.error) {
     throw new Error("Could not load this idea's team");
   }
   const team = teamRes.data ?? [];
-  const members = team.filter((t) => t.role === "member").length;
+  // The count is public with the idea; who is on the team is visible only on campus (RLS).
+  const members = teamCounts.get(idea.id) ?? 0;
+  const canSeePeople = viewer.isAdmin || viewer.status === "approved";
   const onTeam = team.some((t) => t.profile_id === viewer.id);
   const details = detailsRes.data?.details ?? null; // RLS: only team members (and admins) get a row
   const myRequest = myRequestRes.data;
@@ -123,7 +129,16 @@ async function IdeaContent({
     avatar: string | null;
   }[] = [];
   let matchesFailed = false;
+  let planVersions: { id: string; details: string; created_at: string }[] = [];
   if (isOwner) {
+    const { data: versions, error: versionsError } = await supabase
+      .from("idea_plan_versions")
+      .select("id, details, created_at")
+      .eq("idea_id", idea.id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    if (versionsError) throw new Error("Could not load the plan history");
+    planVersions = versions ?? [];
     const [matchRes, appRes] = await Promise.all([
       supabase.rpc("idea_matches", { p_idea_id: idea.id, p_limit: 20 }),
       supabase
@@ -178,6 +193,11 @@ async function IdeaContent({
             <Badge tone={status === "open" ? "outline" : "neutral"}>{statusLabel[status]}</Badge>
           </div>
           {posted && <PostedNotice />}
+          {leftTeam && (
+            <Alert title="You left the team" className="mt-4">
+              The owner has been told. You can no longer read the full plan.
+            </Alert>
+          )}
           {planFailed && (
             <Alert tone="danger" title="Your plan wasn't saved" className="mt-4">
               The idea is posted. Add the full plan again below.
@@ -230,7 +250,31 @@ async function IdeaContent({
                 </h2>
                 <Panel className="mt-4 p-6">
                   {isOwner ? (
-                    <PlanForm ideaId={idea.id} details={details ?? ""} />
+                    <>
+                      <PlanForm ideaId={idea.id} details={details ?? ""} />
+                      {planVersions.length > 0 && (
+                        <details className="mt-6 border-t border-line pt-4">
+                          <summary className="cursor-pointer text-body-sm font-medium text-ink">
+                            Plan history: {planVersions.length} saved{" "}
+                            {planVersions.length === 1 ? "version" : "versions"}, first on{" "}
+                            {formatDateTime(planVersions[planVersions.length - 1].created_at)}
+                          </summary>
+                          <p className="mt-2 text-caption text-muted">
+                            Dated proof of what you wrote and when. Only you can see this.
+                          </p>
+                          <ol className="mt-4 space-y-4">
+                            {planVersions.map((v) => (
+                              <li key={v.id} className="border-l-2 border-line pl-4">
+                                <p className="text-caption text-muted">{formatDateTime(v.created_at)}</p>
+                                <p className="mt-1 line-clamp-3 text-body-sm whitespace-pre-line text-ink-soft">
+                                  {v.details}
+                                </p>
+                              </li>
+                            ))}
+                          </ol>
+                        </details>
+                      )}
+                    </>
                   ) : details !== null && onTeam ? (
                     details ? (
                       <p className="text-body whitespace-pre-line text-ink-soft">{details}</p>
@@ -340,7 +384,7 @@ async function IdeaContent({
                       <p className="mt-1 text-body-sm text-muted">{requestState[myRequest.status]}</p>
                       <div className="mt-4 flex flex-wrap gap-2">
                         {myRequest.status === "pending" && myRequest.type === "invite" && (
-                          <RespondButtons requestId={myRequest.id} label="invite" />
+                          <RespondButtons requestId={myRequest.id} label="invite" needsAgreement />
                         )}
                         {myRequest.status === "pending" && myRequest.type === "application" && (
                           <WithdrawButton requestId={myRequest.id} />
@@ -373,28 +417,44 @@ async function IdeaContent({
 
               <Panel className="p-6">
                 <h2 className="font-medium text-ink">Team</h2>
-                <ul className="mt-4 space-y-4">
-                  {team.map((t) => (
-                    <li key={t.profile_id} className="flex items-center gap-3">
-                      <Avatar name={t.profiles?.full_name || "Student"} src={t.profiles?.avatar_url} size="sm" />
-                      <div className="min-w-0 flex-1">
-                        {t.profiles?.username ? (
-                          <Link
-                            href={`/u/${t.profiles.username}`}
-                            className="truncate text-body-sm font-medium text-ink hover:text-accent"
-                          >
-                            {t.profiles.full_name || `@${t.profiles.username}`}
-                          </Link>
-                        ) : (
-                          <p className="truncate text-body-sm font-medium text-ink">
-                            {t.profiles?.full_name || "Student"}
-                          </p>
+                {!canSeePeople && (
+                  <p className="mt-2 text-body-sm text-muted">
+                    {members} {members === 1 ? "builder has" : "builders have"} joined. Verify to see who&rsquo;s on the
+                    team; students are visible only to verified students on campus.
+                  </p>
+                )}
+                {canSeePeople && (
+                  <ul className="mt-4 space-y-4">
+                    {team.map((t) => (
+                      <li key={t.profile_id} className="flex items-center gap-3">
+                        <Avatar name={t.profiles?.full_name || "Student"} src={t.profiles?.avatar_url} size="sm" />
+                        <div className="min-w-0 flex-1">
+                          {t.profiles?.username ? (
+                            <Link
+                              href={`/u/${t.profiles.username}`}
+                              className="truncate text-body-sm font-medium text-ink hover:text-accent"
+                            >
+                              {t.profiles.full_name || `@${t.profiles.username}`}
+                            </Link>
+                          ) : (
+                            <p className="truncate text-body-sm font-medium text-ink">
+                              {t.profiles?.full_name || "Student"}
+                            </p>
+                          )}
+                          <p className="text-caption text-muted">{t.role === "owner" ? "Owner" : "Builder"}</p>
+                        </div>
+                        {t.role === "member" && (isOwner || t.profile_id === viewer.id) && (
+                          <RemoveMemberButton
+                            ideaId={idea.id}
+                            profileId={t.profile_id}
+                            self={t.profile_id === viewer.id}
+                            name={t.profiles?.full_name || "this builder"}
+                          />
                         )}
-                        <p className="text-caption text-muted">{t.role === "owner" ? "Owner" : "Builder"}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 {members < idea.team_size && (
                   <p className="mt-4 text-caption text-muted">
                     {idea.team_size - members} {idea.team_size - members === 1 ? "place" : "places"} left
@@ -402,11 +462,13 @@ async function IdeaContent({
                 )}
               </Panel>
 
-              {owner && !isOwner && (
+              {!isOwner && (
                 <p className="text-caption text-muted">
-                  Posted by {owner.full_name || "a student"} {timeAgo(idea.created_at)}.
+                  {/* The owner's name is visible only on campus; otherwise just say when. */}
+                  Posted by {owner?.full_name || "a verified student"} {timeAgo(idea.created_at)}.
                 </p>
               )}
+              {!isOwner && <ReportForm kind="idea" targetId={idea.id} label="Report this idea" />}
             </aside>
           </div>
         </Container>

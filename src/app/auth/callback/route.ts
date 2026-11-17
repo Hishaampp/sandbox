@@ -37,8 +37,10 @@ export async function GET(request: NextRequest) {
         const token = data.session.provider_token;
         if (!token) return NextResponse.redirect(new URL("/dashboard?github=github", origin));
         const result = await syncGitHubSkills(data.user, token);
-        const status = result.ok ? "connected" : result.reason;
-        return NextResponse.redirect(new URL(`/dashboard?github=${status}`, origin));
+        const target = result.ok
+          ? `/dashboard?github=connected&leftout=${result.leftOut}`
+          : `/dashboard?github=${result.reason}`;
+        return NextResponse.redirect(new URL(target, origin));
       }
       return NextResponse.redirect(new URL(next, origin));
     }

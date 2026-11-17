@@ -48,6 +48,7 @@ const repos = [
   { name: "campus-map", lang: "TypeScript", kind: "original", pushed: "3 weeks ago" },
   { name: "attendance-bot", lang: "Python", kind: "original", pushed: "1 month ago" },
   { name: "react", lang: "JavaScript", kind: "fork", pushed: "8 months ago" },
+  { name: "group-assignment", lang: "Java", kind: "others", pushed: "5 months ago" },
   { name: "untitled-project", lang: "—", kind: "empty", pushed: "1 year ago" },
 ] as const;
 
@@ -72,8 +73,8 @@ const ledger = [
   },
   {
     what: "An idea's full plan",
-    sees: "Accepted teammates only",
-    keep: "Kept with the idea",
+    sees: "Accepted teammates (who agree not to share it) and the coordinator",
+    keep: "Kept with a dated history of every change",
     deleted: "When the owner deletes it",
   },
 ];
@@ -196,12 +197,20 @@ export default function HomePage() {
                     name: r.name,
                     language: r.lang === "—" ? null : r.lang,
                     detail: r.pushed,
-                    excluded: r.kind === "fork" ? "Fork, left out" : r.kind === "empty" ? "Empty, left out" : undefined,
+                    excluded:
+                      r.kind === "fork"
+                        ? "Fork, left out"
+                        : r.kind === "empty"
+                          ? "Empty, left out"
+                          : r.kind === "others"
+                            ? "Mostly others', left out"
+                            : undefined,
                   }))}
                 />
               </Panel>
               <figcaption className="mt-3 text-caption text-muted">
-                Only original, non-empty repositories count. A fork is someone else&rsquo;s code.
+                Only original repositories you mostly wrote count. Forks, empty repositories, and repositories where
+                most commits are someone else&rsquo;s are left out.
               </figcaption>
             </figure>
 

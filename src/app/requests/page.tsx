@@ -162,10 +162,14 @@ async function RequestsContent({ searchParams }: { searchParams: PageProps<"/req
                           </p>
                         )}
                       </div>
-                      <div className="flex flex-col items-start gap-3 sm:items-end">
+                      <div className="flex flex-col items-start gap-3 sm:max-w-xs sm:shrink-0 sm:items-end">
                         <Badge tone={badge.tone}>{badge.label}</Badge>
                         {r.status === "pending" && tab === "received" && (
-                          <RespondButtons requestId={r.id} label={`${personName}, ${r.idea?.title ?? "idea"}`} />
+                          <RespondButtons
+                            requestId={r.id}
+                            label={`${personName}, ${r.idea?.title ?? "idea"}`}
+                            needsAgreement={r.type === "invite"}
+                          />
                         )}
                         {r.status === "pending" && tab === "sent" && <WithdrawButton requestId={r.id} />}
                       </div>

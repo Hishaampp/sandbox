@@ -49,7 +49,7 @@ async function inBatches<T, R>(items: T[], fn: (item: T) => Promise<R>): Promise
   return out;
 }
 
-async function readRepos(repos: GitHubRepo[], token: string | null): Promise<RepoInput[]> {
+async function readRepos(repos: GitHubRepo[], token: string | null, login: string): Promise<RepoInput[]> {
   // Only original, non-empty, public repositories count.
   const original = repos
     .filter((r) => !r.fork && r.size > 0 && !r.private)
@@ -85,6 +85,17 @@ async function readRepos(repos: GitHubRepo[], token: string | null): Promise<Rep
         pubspec: pubspec ?? undefined,
       };
     }
+    // Who wrote it: the student's commits against everyone's (linked accounts, top 30).
+    const contributors =
+      (await gh<{ login: string; contributions: number }[]>(
+        `/repos/${repo.owner.login}/${repo.name}/contributors?per_page=30`,
+        token,
+      )) ?? [];
+    if (Array.isArray(contributors) && contributors.length) {
+      const total = contributors.reduce((sum, c) => sum + c.contributions, 0);
+      const mine = contributors.find((c) => c.login.toLowerCase() === login.toLowerCase())?.contributions ?? 0;
+      input.commits = { mine, total };
+    }
     return input;
   });
 }
@@ -99,6 +110,6 @@ export async function readGitHubWithToken(token: string) {
   if (!user) throw new GitHubReadError("GitHub did not return the signed-in account");
   const repos =
     (await gh<GitHubRepo[]>("/user/repos?visibility=public&affiliation=owner&sort=pushed&per_page=100", token)) ?? [];
-  const inputs = await readRepos(repos, token);
+  const inputs = await readRepos(repos, token, user.login);
   return { githubId: user.id, login: user.login, ...buildSkills(inputs) };
 }

@@ -172,6 +172,7 @@ async function DashboardContent({ searchParams }: { searchParams: PageProps<"/da
   const viewer = await requireViewer("/dashboard");
   const params = await searchParams;
   const flash = typeof params.github === "string" ? githubMessages[params.github] : undefined;
+  const leftOut = Number(params.leftout) || 0;
   const submission = await latestSubmission(viewer.id);
   const verified = viewer.status === "approved";
   const context = [viewer.collegeName, viewer.department, yearLabel(viewer.year)].filter(Boolean).join(", ");
@@ -189,6 +190,13 @@ async function DashboardContent({ searchParams }: { searchParams: PageProps<"/da
           {flash && (
             <Alert tone={flash.tone} title={flash.title} className="mt-8">
               {flash.body}
+              {params.github === "connected" && leftOut > 0 && (
+                <>
+                  {" "}
+                  {leftOut} {leftOut === 1 ? "repository was" : "repositories were"} left out because most of
+                  {leftOut === 1 ? " its" : " their"} commits weren&rsquo;t yours.
+                </>
+              )}
             </Alert>
           )}
 

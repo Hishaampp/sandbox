@@ -220,6 +220,12 @@
     caret-color: var(--accent);
   }
 
+  /* Native checkboxes and radios in the ink colour, so they follow day and night. */
+  input[type="checkbox"],
+  input[type="radio"] {
+    accent-color: var(--ink);
+  }
+
   html {
     scrollbar-color: var(--line-strong) transparent;
   }

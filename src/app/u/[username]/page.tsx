@@ -1,7 +1,8 @@
-import { ExternalLink, UserX } from "lucide-react";
+import { ExternalLink, Lock, UserX } from "lucide-react";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AppHeader, AppHeaderFallback } from "@/components/site/app-header";
+import { BlockButton, ReportForm } from "@/components/safety/safety-controls";
 import { Alert } from "@/components/ui/alert";
 import { Avatar } from "@/components/ui/avatar";
 import { VerifiedBadge } from "@/components/ui/badge";
@@ -21,6 +22,32 @@ export const metadata: Metadata = { title: "Student profile" };
 async function ProfileContent({ params }: { params: PageProps<"/u/[username]">["params"] }) {
   const { username } = await params;
   const viewer = await requireViewer(`/u/${encodeURIComponent(username)}`);
+
+  // Student profiles are visible only to verified students on the same campus (enforced by RLS).
+  // Say so, rather than letting the empty result read as "no such student".
+  const ownProfile = viewer.username?.toLowerCase() === username.toLowerCase();
+  if (!ownProfile && !viewer.isAdmin && viewer.status !== "approved") {
+    return (
+      <>
+        <AppHeader viewer={viewer} />
+        <main id="main" className="flex-1">
+          <Container className="py-16 md:py-24">
+            <Panel className="mx-auto flex max-w-md flex-col items-center px-6 py-14 text-center">
+              <Lock className="size-6 text-muted" aria-hidden="true" />
+              <h1 className="mt-4 text-title font-semibold text-ink">Verify to see student profiles</h1>
+              <p className="mt-1 text-body-sm text-muted">
+                Profiles are visible only to verified students on the same campus, to keep students&rsquo; details
+                private.
+              </p>
+              <ButtonLink href={viewer.status === "pending" ? "/dashboard" : "/onboarding"} size="sm" className="mt-6">
+                {viewer.status === "pending" ? "See verification status" : "Verify now"}
+              </ButtonLink>
+            </Panel>
+          </Container>
+        </main>
+      </>
+    );
+  }
   const supabase = await createClient();
 
   // Public face only: no email, no registration number (those never live on profiles).
@@ -74,6 +101,16 @@ async function ProfileContent({ params }: { params: PageProps<"/u/[username]">["
   const skills = (skillRows ?? []) as SkillRow[];
   const repos = repoRows ?? [];
   const isMe = student.id === viewer.id;
+  const { data: blockRow, error: blockError } = isMe
+    ? { data: null }
+    : await supabase
+        .from("blocks")
+        .select("blocked_id")
+        .eq("blocker_id", viewer.id)
+        .eq("blocked_id", student.id)
+        .maybeSingle();
+  if (blockError) throw new Error("Could not load this profile's block status");
+  const blocked = Boolean(blockRow);
   const meta = [student.department, yearLabel(student.year), student.colleges?.name].filter(Boolean).join(", ");
 
   return (
@@ -124,6 +161,18 @@ async function ProfileContent({ params }: { params: PageProps<"/u/[username]">["
               )}
             </div>
           </div>
+
+          {!isMe && (
+            <div className="mt-4 flex flex-wrap items-start gap-2 border-t border-line pt-4">
+              {blocked && (
+                <p className="w-full text-body-sm text-muted">
+                  You blocked this student. They can&rsquo;t invite you or ask to join your ideas.
+                </p>
+              )}
+              <BlockButton profileId={student.id} blocked={blocked} name={student.full_name || "this student"} />
+              <ReportForm kind="profile" targetId={student.id} label="Report this student" />
+            </div>
+          )}
 
           <div className="mt-12 grid grid-cols-1 items-start gap-10 lg:grid-cols-12">
             <section aria-labelledby="skills-heading" className="lg:col-span-5">

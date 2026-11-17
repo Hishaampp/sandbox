@@ -98,6 +98,7 @@ export async function applyToIdea(_prev: SimpleState, formData: FormData): Promi
   const message = messageSchema.safeParse(formData.get("message") ?? "");
   if (!ideaId.success) return { error: "This idea couldn't be found." };
   if (!message.success) return { error: message.error.issues[0]?.message };
+  if (formData.get("agree") !== "on") return { error: "Tick the team agreement to ask to join." };
 
   const supabase = await createClient();
   const { error } = await supabase.from("requests").insert({
@@ -105,6 +106,8 @@ export async function applyToIdea(_prev: SimpleState, formData: FormData): Promi
     profile_id: viewer.id,
     type: "application",
     message: message.data || null,
+    // The database replaces this with its own clock and refuses a request without it.
+    builder_agreed_at: new Date().toISOString(),
   });
   if (error) return { error: readable(error, "Your request wasn't sent. Try again.") };
   refresh();
@@ -134,8 +137,16 @@ export async function respondToRequest(_prev: SimpleState, formData: FormData): 
   if (!id.success) return { error: "This request couldn't be found." };
   if (!decision.success) return { error: "Choose accept or decline." };
   const accept = decision.data === "accept";
+  const agreed = formData.get("agree") === "on";
+  if (accept && formData.get("needsAgreement") === "1" && !agreed) {
+    return { error: "Tick the team agreement to accept." };
+  }
   const supabase = await createClient();
-  const { error } = await supabase.rpc("respond_to_request", { p_request_id: id.data, p_accept: accept });
+  const { error } = await supabase.rpc("respond_to_request", {
+    p_request_id: id.data,
+    p_accept: accept,
+    p_agreed: agreed,
+  });
   if (error) return { error: readable(error, "Your answer wasn't saved. Try again.") };
   refresh();
   return { done: true };
@@ -185,6 +196,26 @@ export async function saveIdeaPlan(_prev: SimpleState, formData: FormData): Prom
     .update({ details: details.data.trim() }, { count: "exact" })
     .eq("idea_id", ideaId.data);
   if (error || !count) return { error: "The plan wasn't saved. Only the owner can edit it." };
+  refresh();
+  return { done: true };
+}
+
+/** The owner removes a builder, or a builder leaves. RLS allows only those two cases. */
+export async function removeTeamMember(_prev: SimpleState, formData: FormData): Promise<SimpleState> {
+  const viewer = await getViewer();
+  if (!viewer) return { error: "Your session ended. Sign in again." };
+  const ideaId = z.uuid().safeParse(formData.get("ideaId"));
+  const profileId = z.uuid().safeParse(formData.get("profileId"));
+  if (!ideaId.success || !profileId.success) return { error: "That teammate couldn't be found." };
+  const supabase = await createClient();
+  const { error, count } = await supabase
+    .from("team_members")
+    .delete({ count: "exact" })
+    .eq("idea_id", ideaId.data)
+    .eq("profile_id", profileId.data)
+    .eq("role", "member");
+  if (error || !count) return { error: "That change wasn't saved. Try again." };
+  if (profileId.data === viewer.id) redirect(`/ideas/${ideaId.data}?left=1`);
   refresh();
   return { done: true };
 }

@@ -55,3 +55,11 @@ export const getPendingReceivedCount = cache(async (viewerId: string): Promise<n
   }
   return (invites ?? 0) + applications;
 });
+
+/** How many builders joined each idea. Counts only, so it is safe to show anyone who can see the idea. */
+export async function getTeamCounts(ideaIds: string[]): Promise<Map<string, number>> {
+  if (!ideaIds.length) return new Map();
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("idea_team_counts", { p_idea_ids: ideaIds });
+  return new Map((data ?? []).map((row) => [row.idea_id, row.members]));
+}

@@ -9,7 +9,7 @@ import { Container } from "@/components/ui/container";
 import { Field, Select } from "@/components/ui/field";
 import { Panel } from "@/components/ui/panel";
 import { requireViewer } from "@/lib/auth";
-import { getSkillCatalog, skillNamer, statusLabel, type IdeaStatus } from "@/lib/ideas";
+import { getSkillCatalog, getTeamCounts, skillNamer, statusLabel, type IdeaStatus } from "@/lib/ideas";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Ideas" };
@@ -40,11 +40,7 @@ async function IdeasContent({ searchParams }: { searchParams: PageProps<"/ideas"
   ]);
 
   const ids = (ideas ?? []).map((i) => i.id);
-  const { data: memberRows } = ids.length
-    ? await supabase.from("team_members").select("idea_id").in("idea_id", ids).eq("role", "member")
-    : { data: [] as { idea_id: string }[] };
-  const memberCount = new Map<string, number>();
-  for (const m of memberRows ?? []) memberCount.set(m.idea_id, (memberCount.get(m.idea_id) ?? 0) + 1);
+  const memberCount = await getTeamCounts(ids);
 
   const fit = new Map((fitRes.data ?? []).map((f) => [f.idea_id, f.match_pct]));
   const mine = new Set((mySkillsRes.data ?? []).map((s) => s.slug));

@@ -151,7 +151,11 @@ select pg_temp.expect_error('owner cannot accept their own invite',
   $$select public.respond_to_request((select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1), true)$$);
 
 select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
-select public.respond_to_request((select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1), true);
+select pg_temp.expect_error('builder must agree to the team terms before accepting',
+  $$select public.respond_to_request((select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1), true)$$);
+select public.respond_to_request((select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1), true, true);
+select pg_temp.check('the agreement time is recorded on the request',
+  (select builder_agreed_at is not null from public.requests where id = (select r.id from public.requests r where r.idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') limit 1)));
 select pg_temp.check('team formed when full', (select status = 'team_formed' from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a'));
 select pg_temp.check('accepted builder can now read full details', (select count(*) = 1 from public.idea_details where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
 update public.idea_details set details = 'hacked';  -- RLS: matches 0 rows for a non-owner
@@ -185,6 +189,84 @@ set local role service_role;
 select pg_temp.expect_error('one GitHub account cannot back two students',
   $$select public.sync_github_profile('00000000-0000-0000-0000-00000000000c', 999000001, 'Builder-B', '[]', '[]')$$);
 reset role;
+
+-- Campus-only people: unverified students see idea summaries, not people.
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000c');
+select pg_temp.check('unverified student cannot see another student''s profile',
+  (select count(*) = 0 from public.profiles where id = '00000000-0000-0000-0000-00000000000b'));
+select pg_temp.check('unverified student cannot see another student''s skills or repos',
+  (select count(*) = 0 from public.skills where profile_id = '00000000-0000-0000-0000-00000000000b')
+  and (select count(*) = 0 from public.repos where profile_id = '00000000-0000-0000-0000-00000000000b'));
+select pg_temp.check('unverified student cannot see who is on a team',
+  (select count(*) = 0 from public.team_members));
+select pg_temp.check('unverified student still sees idea summaries and team sizes',
+  (select count(*) >= 1 from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')
+  and (select members = 1 from public.idea_team_counts(array[(select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')])));
+select pg_temp.check('a student always sees their own profile',
+  (select count(*) = 1 from public.profiles where id = auth.uid()));
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
+select pg_temp.check('a verified student on the same campus sees profiles and skills',
+  (select count(*) = 1 from public.profiles where id = '00000000-0000-0000-0000-00000000000b')
+  and (select count(*) >= 1 from public.skills where profile_id = '00000000-0000-0000-0000-00000000000b'));
+
+-- Plan history and leaving teams.
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
+select pg_temp.check('saved plan edits are kept as dated versions for the owner',
+  (select count(*) >= 1 from public.idea_plan_versions where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
+select pg_temp.check('a teammate cannot read the plan history',
+  (select count(*) = 0 from public.idea_plan_versions where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
+delete from public.team_members where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a') and profile_id = '00000000-0000-0000-0000-00000000000b';
+select pg_temp.check('removing a builder reopens a full team',
+  (select status = 'open' from public.ideas where id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
+select pg_temp.check('the removed builder is told',
+  (select count(*) = 1 from public.notifications where kind = 'removed_from_team'));
+select pg_temp.check('the removed builder can no longer read the plan',
+  (select count(*) = 0 from public.idea_details where idea_id = (select id from public.ideas where owner_id = '00000000-0000-0000-0000-00000000000a')));
+select pg_temp.act_as_postgres();
+insert into public.ideas (owner_id, college_id, title, summary, skills_needed, team_size, hours_per_week)
+values ('00000000-0000-0000-0000-00000000000a', (select id from public.colleges where slug = 'lpu'), 'Second idea', 'A second idea to test asking to join with terms.', '{python}', 2, 4);
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
+select pg_temp.expect_error('asking to join without agreeing to the terms fails',
+  $$insert into public.requests (idea_id, profile_id, type) values ((select id from public.ideas where title = 'Second idea' and owner_id = '00000000-0000-0000-0000-00000000000a'), auth.uid(), 'application')$$);
+
+-- Safety: blocks, daily limits, reports.
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
+insert into public.blocks (blocker_id, blocked_id) values (auth.uid(), '00000000-0000-0000-0000-00000000000b');
+select pg_temp.check('a blocked student is left out of the owner''s matches',
+  not exists (select 1 from public.idea_matches((select id from public.ideas where title = 'Second idea' and owner_id = '00000000-0000-0000-0000-00000000000a')) m where m.profile_id = '00000000-0000-0000-0000-00000000000b'));
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
+select pg_temp.check('the blocked student cannot see who blocked them',
+  (select count(*) = 0 from public.blocks));
+select pg_temp.expect_error('a blocked student cannot ask to join the blocker''s idea',
+  $$insert into public.requests (idea_id, profile_id, type, builder_agreed_at) values ((select id from public.ideas where title = 'Second idea' and owner_id = '00000000-0000-0000-0000-00000000000a'), auth.uid(), 'application', now())$$);
+select pg_temp.expect_error('a student cannot report themselves',
+  $$insert into public.reports (reporter_id, target_profile_id, reason) values (auth.uid(), auth.uid(), 'testing a self report')$$);
+insert into public.reports (reporter_id, target_profile_id, reason) values (auth.uid(), '00000000-0000-0000-0000-00000000000a', 'Testing the report flow.');
+select pg_temp.check('a student can report someone and see their own report',
+  (select count(*) = 1 from public.reports where reporter_id = auth.uid()));
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000a');
+select pg_temp.check('the reported student cannot see the report',
+  (select count(*) = 0 from public.reports));
+insert into public.ideas (owner_id, college_id, title, summary, skills_needed, team_size, hours_per_week)
+select auth.uid(), (select id from public.colleges where slug = 'lpu'), 'Limit idea ' || g, 'An idea posted to test the daily limit.', '{python}', 1, 2
+from generate_series(1, 3) g;
+select pg_temp.expect_error('a sixth idea in one day is refused',
+  $$insert into public.ideas (owner_id, college_id, title, summary, skills_needed, team_size, hours_per_week) values (auth.uid(), (select id from public.colleges where slug = 'lpu'), 'One too many', 'An idea posted to test the daily limit.', '{python}', 1, 2)$$);
+
+-- An admin never sees reports about themselves.
+select pg_temp.act_as_postgres();
+update public.profiles set is_admin = true where id = '00000000-0000-0000-0000-00000000000b';
+insert into public.reports (reporter_id, target_profile_id, reason)
+values ('00000000-0000-0000-0000-00000000000c', '00000000-0000-0000-0000-00000000000b', 'Report about an admin, for testing.');
+select pg_temp.act_as('00000000-0000-0000-0000-00000000000b');
+select pg_temp.check('an admin cannot see a report about themselves',
+  not exists (select 1 from public.reports where target_profile_id = auth.uid()));
+select pg_temp.act_as('00000000-0000-0000-0000-0000000000ad');
+select pg_temp.check('another admin can see it',
+  exists (select 1 from public.reports where target_profile_id = '00000000-0000-0000-0000-00000000000b'));
 select pg_temp.act_as_postgres();
 \echo 'ALL CHECKS PASSED'
 rollback;

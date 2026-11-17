@@ -4,7 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { Panel } from "@/components/ui/panel";
 import type { Viewer } from "@/lib/auth";
-import { skillNamer, statusLabel, type IdeaStatus } from "@/lib/ideas";
+import { getTeamCounts, skillNamer, statusLabel, type IdeaStatus } from "@/lib/ideas";
 import { createClient } from "@/lib/supabase/server";
 
 /** Ideas the student owns, and teams they've joined. */
@@ -18,15 +18,11 @@ export async function MyIdeas({ viewer }: { viewer: Viewer }) {
 
   const ideas = (memberships ?? []).flatMap((m) => (m.ideas ? [{ role: m.role, idea: m.ideas }] : []));
   const ids = ideas.map((i) => i.idea.id);
-  const [{ data: memberRows }, { data: mySkills }, name] = await Promise.all([
-    ids.length
-      ? supabase.from("team_members").select("idea_id").in("idea_id", ids).eq("role", "member")
-      : Promise.resolve({ data: [] as { idea_id: string }[] }),
+  const [counts, { data: mySkills }, name] = await Promise.all([
+    getTeamCounts(ids),
     supabase.from("skills").select("slug").eq("profile_id", viewer.id),
     skillNamer(),
   ]);
-  const counts = new Map<string, number>();
-  for (const m of memberRows ?? []) counts.set(m.idea_id, (counts.get(m.idea_id) ?? 0) + 1);
   const mine = new Set((mySkills ?? []).map((s) => s.slug));
 
   const toRow = ({ idea }: (typeof ideas)[number]): IdeaRowData => ({

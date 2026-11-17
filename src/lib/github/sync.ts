@@ -3,7 +3,7 @@ import type { User } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { GitHubReadError, readGitHubWithToken } from "./read";
 
-export type SyncResult = { ok: true; login: string; skills: number } | { ok: false; reason: "not_linked" | "mismatch" | "taken" | "github" };
+export type SyncResult = { ok: true; login: string; skills: number; leftOut: number } | { ok: false; reason: "not_linked" | "mismatch" | "taken" | "github" };
 
 /** The GitHub account id linked to this Sandbox user through GitHub's own sign-in, if any. */
 export function linkedGitHubId(user: User): number | null {
@@ -48,5 +48,5 @@ export async function syncGitHubSkills(user: User, providerToken: string): Promi
     console.error("GitHub sync failed:", error.message);
     return { ok: false, reason: error.code === "23505" ? "taken" : "github" };
   }
-  return { ok: true, login: data.login, skills: count ?? 0 };
+  return { ok: true, login: data.login, skills: count ?? 0, leftOut: data.leftOut };
 }

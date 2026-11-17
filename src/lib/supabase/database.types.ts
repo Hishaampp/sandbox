@@ -34,6 +34,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       colleges: {
         Row: {
           active: boolean
@@ -91,6 +124,45 @@ export type Database = {
             foreignKeyName: "idea_details_idea_id_fkey"
             columns: ["idea_id"]
             isOneToOne: true
+            referencedRelation: "ideas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      idea_plan_versions: {
+        Row: {
+          created_at: string
+          details: string
+          edited_by: string | null
+          id: string
+          idea_id: string
+        }
+        Insert: {
+          created_at?: string
+          details: string
+          edited_by?: string | null
+          id?: string
+          idea_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          edited_by?: string | null
+          id?: string
+          idea_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "idea_plan_versions_edited_by_fkey"
+            columns: ["edited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "idea_plan_versions_idea_id_fkey"
+            columns: ["idea_id"]
+            isOneToOne: false
             referencedRelation: "ideas"
             referencedColumns: ["id"]
           },
@@ -394,6 +466,7 @@ export type Database = {
       }
       requests: {
         Row: {
+          builder_agreed_at: string | null
           created_at: string
           id: string
           idea_id: string
@@ -405,6 +478,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          builder_agreed_at?: string | null
           created_at?: string
           id?: string
           idea_id: string
@@ -416,6 +490,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          builder_agreed_at?: string | null
           created_at?: string
           id?: string
           idea_id?: string
@@ -658,6 +733,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_see_profile: { Args: { p_profile_id: string }; Returns: boolean }
       clear_id_card_path: {
         Args: { p_verification_id: string }
         Returns: undefined
@@ -679,6 +755,13 @@ export type Database = {
           year: number
         }[]
       }
+      idea_team_counts: {
+        Args: { p_idea_ids: string[] }
+        Returns: {
+          idea_id: string
+          members: number
+        }[]
+      }
       ideas_for_me: {
         Args: { p_limit?: number }
         Returns: {
@@ -689,6 +772,7 @@ export type Database = {
         }[]
       }
       is_admin: { Args: never; Returns: boolean }
+      is_blocked_between: { Args: { a: string; b: string }; Returns: boolean }
       is_idea_owner: {
         Args: { p_idea_id: string; uid?: string }
         Returns: boolean
@@ -698,9 +782,11 @@ export type Database = {
         Returns: boolean
       }
       is_verified: { Args: { uid?: string }; Returns: boolean }
+      my_college: { Args: never; Returns: string }
       respond_to_request: {
-        Args: { p_accept: boolean; p_request_id: string }
+        Args: { p_accept: boolean; p_agreed?: boolean; p_request_id: string }
         Returns: {
+          builder_agreed_at: string | null
           created_at: string
           id: string
           idea_id: string
@@ -775,6 +861,7 @@ export type Database = {
       withdraw_request: {
         Args: { p_request_id: string }
         Returns: {
+          builder_agreed_at: string | null
           created_at: string
           id: string
           idea_id: string

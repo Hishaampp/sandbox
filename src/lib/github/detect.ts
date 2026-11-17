@@ -16,7 +16,24 @@ export type RepoInput = {
   stars: number;
   pushed_at: string;
   manifests?: { packageJson?: string; requirements?: string; pyproject?: string; pubspec?: string };
+  /** The student's own commits, and all commits by linked contributors. Undefined when unknown. */
+  commits?: { mine: number; total: number };
 };
+
+/**
+ * A repo counts only if the student made at least this share of its commits, so
+ * repos written mostly by other people or bots don't count. One-commit projects
+ * still count (many students push a whole project at once), which means a
+ * re-uploaded project can still slip through; owners should talk to builders.
+ */
+export const MIN_OWN_SHARE = 0.5;
+
+/** Whether the student actually wrote this repo. Repos with unknown commit data are kept. */
+export function isMostlyMine(repo: Pick<RepoInput, "commits">): boolean {
+  if (!repo.commits) return true;
+  const { mine, total } = repo.commits;
+  return total > 0 && mine / total >= MIN_OWN_SHARE;
+}
 
 export type RepoRecord = Omit<RepoInput, "manifests"> & { frameworks: string[] };
 export type SkillAggregate = { name: string; repo_count: number; last_pushed_at: string; stars: number };
@@ -126,14 +143,18 @@ export function languagesForRepo(repo: Pick<RepoInput, "languages" | "main_langu
   return [...names];
 }
 
-export function buildSkills(repos: RepoInput[]): { repos: RepoRecord[]; skills: SkillAggregate[] } {
+export function buildSkills(repos: RepoInput[]): { repos: RepoRecord[]; skills: SkillAggregate[]; leftOut: number } {
+  const counted = repos.filter(isMostlyMine);
+  const leftOut = repos.length - counted.length;
+  repos = counted;
   const records: RepoRecord[] = [];
   const bySkill = new Map<string, SkillAggregate>();
 
   for (const repo of repos) {
     const frameworks = frameworksFromManifests(repo.manifests);
-    const { manifests: _unused, ...rest } = repo;
+    const { manifests: _unused, commits: _commits, ...rest } = repo;
     void _unused;
+    void _commits;
     records.push({ ...rest, frameworks });
 
     for (const name of new Set([...languagesForRepo(repo), ...frameworks])) {
@@ -150,5 +171,5 @@ export function buildSkills(repos: RepoInput[]): { repos: RepoRecord[]; skills: 
   }
 
   const skills = [...bySkill.values()].sort((a, b) => b.repo_count - a.repo_count || (a.last_pushed_at < b.last_pushed_at ? 1 : -1));
-  return { repos: records, skills };
+  return { repos: records, skills, leftOut };
 }
